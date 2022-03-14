@@ -1,6 +1,6 @@
 package br.com.todo.todo.service;
 
-import br.com.todo.todo.form.MetaFormCadastro;
+import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.Usuario;
 import br.com.todo.todo.repository.MetaRepository;
@@ -17,6 +17,9 @@ public class MetaService {
 
     private MetaRepository metaRepository;
 
+    @Autowired
+    private ConclusaoMetaService conclusaoMetaService;
+
     public MetaService(UsuarioRepository usuarioRepository, MetaRepository metaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.metaRepository = metaRepository;
@@ -25,11 +28,25 @@ public class MetaService {
     public Meta salvarMeta(MetaRepository metaRepository, Long idUsuario, Meta meta) throws Exception {
         Optional<Usuario> usuario = usuarioRepository.findById(idUsuario);
         if(usuario.isEmpty()){
-            throw new Exception("Não existe usuário para vincular a Meta");
-
-        }else{
+            throw new Exception("Usuário não encontrado");
+        }
+        else{
             meta.setUsuario(usuario.get());
             return metaRepository.save(meta);
         }
     }
+
+    public Meta concluirMeta(Long idMeta) throws TarefasInacabadasException, Exception {
+        Optional<Meta> meta = metaRepository.findById(idMeta);
+        if(meta.isEmpty()){
+            throw new Exception("Meta não encontrada");
+        }else{
+            Meta metaPresente = meta.get();
+            conclusaoMetaService.validarTarefas(metaPresente);
+            return metaRepository.save(metaPresente);
+        }
+    }
+
+
+
 }

@@ -1,4 +1,4 @@
-package br.com.todo.todo.form;
+package br.com.todo.todo.dto.form;
 
 import br.com.todo.todo.model.Tarefa;
 

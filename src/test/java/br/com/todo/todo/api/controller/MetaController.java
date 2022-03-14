@@ -1,6 +1,6 @@
 package br.com.todo.todo.api.controller;
 
-import br.com.todo.todo.form.MetaFormCadastro;
+import br.com.todo.todo.dto.form.MetaFormCadastro;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.repository.MetaRepository;
@@ -8,6 +8,7 @@ import br.com.todo.todo.service.MetaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -89,8 +91,33 @@ public class MetaController {
 
     @Test
     @DisplayName("Deverá lançar erro de validação no formulário não adequado de Meta ")
-    public void criarRecursoMetaComErro(){
+    public void criarRecursoMetaComErro() throws Exception {
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        String metaJson = mapper.writeValueAsString(new MetaFormCadastro());
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(META_URI)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(metaJson);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Deverá devolver o Json da meta detalhada concluida")
+    public void deveConcluirMetaTest() throws Exception {
 
     }
+
+    @Test
+    @DisplayName("Deve lançar exceção de tarefas não concluidas da meta")
+    public void deveFalharAoConcluirMetaTest(){
+
+    }
+
 
 }

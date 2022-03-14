@@ -3,6 +3,7 @@ package br.com.todo.todo.dto;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.model.complemento.Status;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
 
@@ -12,6 +13,7 @@ public class MetaDtoSimples {
 
     private String objetivo;
 
+    @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
     private LocalDateTime prazoFinalEstipulado;
 
     private Status status;
@@ -33,7 +35,6 @@ public class MetaDtoSimples {
     public String getObjetivo() {
         return objetivo;
     }
-
 
     public LocalDateTime getPrazoFinalEstipulado() {
         return prazoFinalEstipulado;

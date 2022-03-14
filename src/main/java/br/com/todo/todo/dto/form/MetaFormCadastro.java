@@ -1,4 +1,4 @@
-package br.com.todo.todo.form;
+package br.com.todo.todo.dto.form;
 
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.complemento.Dificuldade;
@@ -31,18 +31,18 @@ public class MetaFormCadastro {
     private Long idUsuario;
 
     public MetaFormCadastro(String objetivo, LocalDateTime dataFinalEstipulada,
-                Dificuldade dificuldade, List<String> descTarefasDaMeta, Long idUsuaruio) {
+                Dificuldade dificuldade, List<String> descTarefasDaMeta, Long idUsuario) {
         this.objetivo = objetivo;
         this.dataFinalizacaoEstipulada = dataFinalEstipulada;
         this.dificuldade = dificuldade;
         this.descricaoTarefasDaMeta = descTarefasDaMeta;
-        this.idUsuario = idUsuaruio;
+        this.idUsuario = idUsuario;
     }
 
     public MetaFormCadastro() {
     }
 
-    public  Meta converterParaMetaEntidade(MetaFormCadastro metaForm) {
+    public Meta converterParaMetaEntidade(MetaFormCadastro metaForm) {
 
         Meta meta = new Meta();
         meta.setObjetivo(metaForm.getObjetivo());
