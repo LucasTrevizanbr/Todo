@@ -13,7 +13,7 @@ import java.util.List;
 
 public class MetaFormCadastro {
 
-    @NotNull @Size(min = 10, max = 100)
+    @NotNull @Size(min = 10, max = 200)
     private String objetivo;
 
     @NotNull

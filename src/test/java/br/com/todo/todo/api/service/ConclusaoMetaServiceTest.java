@@ -34,7 +34,7 @@ public class ConclusaoMetaServiceTest {
         Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(LocalDateTime.now()),
                 Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
 
-        conclusaoMetaService.validarTarefas(meta);
+        conclusaoMetaService.concluirMeta(meta);
 
         Assertions.assertThat(meta.getStatus()).isEqualTo(Status.CONCLUIDA);
         Assertions.assertThat(meta.getHistoricoDatasMeta().getDataFinalizacaoReal()).isNotNull();

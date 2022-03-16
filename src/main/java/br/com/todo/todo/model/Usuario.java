@@ -1,5 +1,8 @@
 package br.com.todo.todo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -25,6 +28,7 @@ public class Usuario {
     private LocalDateTime dataCadastro;
 
     @OneToMany(mappedBy = "usuario")
+    @JsonIgnoreProperties("usuario")
     private List<Meta> metas;
 
     public Usuario() {

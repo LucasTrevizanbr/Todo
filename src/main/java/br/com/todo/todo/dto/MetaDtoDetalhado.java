@@ -26,7 +26,7 @@ public class MetaDtoDetalhado {
 
     private List<TarefaDtoDetalhado> tarefasDaMeta = new ArrayList<>();
 
-    private Usuario usuario;
+    private UsuarioDto usuario;
 
     public MetaDtoDetalhado(Meta meta) {
         this.id = meta.getId();
@@ -39,7 +39,7 @@ public class MetaDtoDetalhado {
                 .stream()
                 .map(tarefa -> new TarefaDtoDetalhado(tarefa))
                 .collect(Collectors.toList());
-        this.usuario = meta.getUsuario();
+        this.usuario = new UsuarioDto(meta.getUsuario());
     }
 
     public MetaDtoDetalhado() {
@@ -73,7 +73,7 @@ public class MetaDtoDetalhado {
         return tarefasDaMeta;
     }
 
-    public Usuario getUsuario() {
+    public UsuarioDto getUsuario() {
         return usuario;
     }
 

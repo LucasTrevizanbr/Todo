@@ -1,5 +1,6 @@
 package br.com.todo.todo.service;
 
+import br.com.todo.todo.dto.form.MetaFormAtualizacao;
 import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.Usuario;
@@ -20,6 +21,9 @@ public class MetaService {
     @Autowired
     private ConclusaoMetaService conclusaoMetaService;
 
+    @Autowired
+    private ParalisacaoMetaService paralisacaoMetaService;
+
     public MetaService(UsuarioRepository usuarioRepository, MetaRepository metaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.metaRepository = metaRepository;
@@ -36,17 +40,38 @@ public class MetaService {
         }
     }
 
-    public Meta concluirMeta(Long idMeta) throws TarefasInacabadasException, Exception {
-        Optional<Meta> meta = metaRepository.findById(idMeta);
+    public Meta concluirMeta(Meta meta) throws TarefasInacabadasException {
+
+        if (!conclusaoMetaService.validarTarefas(meta)) {
+            throw new TarefasInacabadasException(meta.getTarefasDaMeta());
+        } else {
+            conclusaoMetaService.concluirMeta(meta);
+        }
+        return metaRepository.save(meta);
+
+    }
+
+    public void deletarMeta(Long id) throws Exception{
+        Optional<Meta> meta = metaRepository.findById(id);
         if(meta.isEmpty()){
-            throw new Exception("Meta não encontrada");
+            throw new Exception("Meta inexistente") ;
         }else{
-            Meta metaPresente = meta.get();
-            conclusaoMetaService.validarTarefas(metaPresente);
-            return metaRepository.save(metaPresente);
+            metaRepository.deleteById(id);
         }
     }
 
+    public Meta paralisarMeta(Meta meta) {
+        paralisacaoMetaService.paralisar(meta);
+        return metaRepository.save(meta);
+    }
 
+    public Meta retomarMeta(Meta meta) {
+        paralisacaoMetaService.retomar(meta);
+        return metaRepository.save(meta);
+    }
 
+    public Meta atualizarMeta(Meta meta, MetaFormAtualizacao form) {
+        meta.setObjetivo(form.getObjetivo());
+        return metaRepository.save(meta);
+    }
 }

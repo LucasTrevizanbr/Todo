@@ -12,17 +12,20 @@ import java.util.List;
 @Service
 public class ConclusaoMetaService {
 
-    public void validarTarefas(Meta meta) throws TarefasInacabadasException {
+    public boolean validarTarefas(Meta meta) throws TarefasInacabadasException {
 
         if(!meta.getTarefasDaMeta().isEmpty()){
             List<Tarefa> tarefasMeta = meta.getTarefasDaMeta();
 
             if(tarefasMeta.stream().anyMatch(tarefa -> !tarefa.isConcluida())){
-                throw new TarefasInacabadasException(tarefasMeta);
-            };
-        }else{
-            meta.setStatus(Status.CONCLUIDA);
-            meta.getHistoricoDatasMeta().setDataFinalizacaoReal(LocalDateTime.now());
+                return false;
+            }
         }
+        return true;
+    }
+
+    public void concluirMeta(Meta metaPresente) {
+        metaPresente.setStatus(Status.CONCLUIDA);
+        metaPresente.getHistoricoDatasMeta().setDataFinalizacaoReal(LocalDateTime.now());
     }
 }

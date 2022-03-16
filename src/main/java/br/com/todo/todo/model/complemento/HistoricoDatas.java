@@ -19,10 +19,10 @@ public class HistoricoDatas {
     private LocalDateTime dataFinalizacaoReal;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    private LocalDateTime dataInicioParalizacao;
+    private LocalDateTime dataInicioParalisacao;
 
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    private LocalDateTime dataRetornoDaParalizacao;
+    private LocalDateTime dataRetornoDaParalisacao;
 
     public HistoricoDatas(LocalDateTime dataFinalizacaoEstipulada) {
         this.dataFinalizacaoEstipulada = dataFinalizacaoEstipulada;
@@ -55,19 +55,19 @@ public class HistoricoDatas {
         this.dataFinalizacaoReal = dataFinalizacaoReal;
     }
 
-    public LocalDateTime getDataInicioParalizacao() {
-        return dataInicioParalizacao;
+    public LocalDateTime getDataInicioParalisacao() {
+        return dataInicioParalisacao;
     }
 
-    public void setDataInicioParalizacao(LocalDateTime dataInicioParalizacao) {
-        this.dataInicioParalizacao = dataInicioParalizacao;
+    public void setDataInicioParalisacao(LocalDateTime dataInicioParalisacao) {
+        this.dataInicioParalisacao = dataInicioParalisacao;
     }
 
-    public LocalDateTime getDataRetornoDaParalizacao() {
-        return dataRetornoDaParalizacao;
+    public LocalDateTime getDataRetornoDaParalisacao() {
+        return dataRetornoDaParalisacao;
     }
 
-    public void setDataRetornoDaParalizacao(LocalDateTime dataRetornoDaParalizacao) {
-        this.dataRetornoDaParalizacao = dataRetornoDaParalizacao;
+    public void setDataRetornoDaParalisacao(LocalDateTime dataRetornoDaParalisacao) {
+        this.dataRetornoDaParalisacao = dataRetornoDaParalisacao;
     }
 }
