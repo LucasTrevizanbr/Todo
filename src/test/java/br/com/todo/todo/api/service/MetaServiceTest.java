@@ -53,7 +53,7 @@ public class MetaServiceTest {
         Mockito.when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         Mockito.when(metaRepository.save(meta)).thenReturn(meta);
 
-        Meta metaSalva = metaService.salvarMeta(metaRepository, Long.valueOf("1"), meta);
+        Meta metaSalva = metaService.salvarMeta(Long.valueOf("1"), meta);
 
         Assertions.assertThat(metaSalva.getId()).isNotNull();
         Assertions.assertThat(metaSalva.getTarefasDaMeta()).isNotNull();

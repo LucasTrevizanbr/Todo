@@ -16,6 +16,9 @@ public class TarefaDtoDetalhado {
         this.descricao = tarefa.getDescricao();
     }
 
+    public TarefaDtoDetalhado() {
+    }
+
     public boolean isConcluida() {
         return concluida;
     }

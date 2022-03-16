@@ -2,6 +2,7 @@ package br.com.todo.todo.api.controller;
 
 import br.com.todo.todo.dto.form.MetaFormAtualizacao;
 import br.com.todo.todo.dto.form.MetaFormCadastro;
+import br.com.todo.todo.dto.form.TarefaFormCadastro;
 import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.Tarefa;
@@ -10,8 +11,8 @@ import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.repository.MetaRepository;
+import br.com.todo.todo.repository.TarefaRepository;
 import br.com.todo.todo.service.MetaService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -19,12 +20,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -33,15 +36,14 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
-
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -58,7 +60,166 @@ public class MetaControllerTest {
     MetaRepository metaRepository;
 
     @MockBean
+    TarefaRepository tarefaRepository;
+
+    @MockBean
     MetaService metaService;
+
+    @Test
+    @DisplayName("Deverá devolver uma pagina default de metas DTO simples")
+    public void buscarPaginaDeMeta() throws Exception {
+        Long id = 1l;
+        Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
+                new Usuario("Laura"),Dificuldade.FACIL);
+        meta.setId(id);
+
+        Meta meta2 = new Meta("Kotlin numerics",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
+                new Usuario("Jorge"),Dificuldade.MEDIO);
+        meta2.setId(2L);
+
+        Tarefa tarefa = new Tarefa("EcmaScript");
+        tarefa.setId(2L);
+        meta.adicionarTarefa(tarefa);
+
+        List<Meta> metas = Arrays.asList(meta,meta2);
+        Page<Meta> metasPaginadas = new PageImpl<>(metas);
+
+
+        BDDMockito.given(metaRepository.findAll(any(PageRequest.class))).willReturn(metasPaginadas);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .get(META_URI)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("content").isNotEmpty())
+                .andExpect(jsonPath("totalElements").value(2));
+    }
+
+    @Test
+    @DisplayName("Deve criar uma tarefa relacionada a Meta")
+    public void criarTarefaTest() throws Exception {
+        Long id = 1l;
+        Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
+                new Usuario("Laura"),Dificuldade.FACIL);
+        meta.setId(id);
+        Tarefa tarefa = new Tarefa("EcmaScript 6");
+        tarefa.setId(2L);
+        meta.adicionarTarefa(tarefa);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String metaJson = mapper.writeValueAsString(tarefa);
+
+        BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
+        BDDMockito.given(metaService.criarTarefa(any(Meta.class), any(TarefaFormCadastro.class)))
+                .willReturn(meta);
+        BDDMockito.given(metaRepository.save(any(Meta.class))).willReturn(meta);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post(META_URI +"/criar-tarefa/"+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(metaJson);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(jsonPath("id").value(1))
+                .andExpect(jsonPath("objetivo").value("Aprender JS"))
+                .andExpect(jsonPath("status").value("ANDAMENTO"));
+
+    }
+
+    @Test
+    @DisplayName("Deve atualizar uma tarefa relacionada a Meta")
+    public void atualizarTarefaTest() throws Exception {
+        Long id = 1l;
+        Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
+                new Usuario("Laura"),Dificuldade.FACIL);
+        meta.setId(id);
+        Tarefa tarefa = new Tarefa("EcmaScript 6");
+        tarefa.setId(2L);
+        meta.adicionarTarefa(tarefa);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String metaJson = mapper.writeValueAsString(tarefa);
+
+        BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
+        BDDMockito.given(metaService.atualizarTarefa(any(Meta.class),anyLong(), any(TarefaFormCadastro.class)))
+                .willReturn(meta);
+        BDDMockito.given(tarefaRepository.save(any(Tarefa.class))).willReturn(tarefa);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(META_URI +"/atualizar-tarefa/metaId="+id+"&tarefaId="+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(metaJson);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("id").value(1))
+                .andExpect(jsonPath("objetivo").value("Aprender JS"))
+                .andExpect(jsonPath("status").value("ANDAMENTO"));
+
+    }
+
+    @Test
+    @DisplayName("Deve deletar uma tarefa relacionada a Meta")
+    public void deletarTarefaTest() throws Exception {
+        Long id = 1l;
+        Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
+                new Usuario("Laura"),Dificuldade.FACIL);
+        meta.setId(id);
+        Tarefa tarefa = new Tarefa("EcmaScript 6");
+        tarefa.setId(2L);
+        meta.adicionarTarefa(tarefa);
+
+        ObjectMapper mapper = new ObjectMapper();
+        String metaJson = mapper.writeValueAsString(tarefa);
+
+        BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
+        BDDMockito.given(metaService.deletarTarefa(any(Meta.class), anyLong())).willReturn(meta);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .delete(META_URI +"/deletar-tarefa/metaId="+id +"&tarefaId="+id);
+
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("id").value(1))
+                .andExpect(jsonPath("objetivo").value("Aprender JS"))
+                .andExpect(jsonPath("status").value("ANDAMENTO"));
+
+    }
+
+    @Test
+    @DisplayName("Deve concluir uma tarefa existente na Meta")
+    public void concluirTarefaTest() throws Exception {
+        Long id = 1l;
+        Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
+                new Usuario("Laura"),Dificuldade.FACIL);
+        meta.setId(id);
+        Tarefa tarefa = new Tarefa("EcmaScript 6");
+        tarefa.setId(id);
+        meta.adicionarTarefa(tarefa);
+
+        BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
+        BDDMockito.given(metaService.concluirTarefa(any(Meta.class), anyLong())).willReturn(meta);
+        BDDMockito.given(tarefaRepository.save(any(Tarefa.class))).willReturn(tarefa);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .put(META_URI +"/concluir-tarefa/metaId="+id +"&tarefaId="+id)
+                .accept(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("id").value(1))
+                .andExpect(jsonPath("objetivo").value("Aprender JS"))
+                .andExpect(jsonPath("status").value("ANDAMENTO"))
+                .andExpect(jsonPath("historicoDatas").isNotEmpty());
+
+    }
+
 
     @Test
     @DisplayName("Deve criar um resource de Meta e devolver seu Json")
@@ -77,7 +238,7 @@ public class MetaControllerTest {
         metaSalva.setId(1L);
 
         BDDMockito.given(metaRepository.save((Mockito.any(Meta.class)))).willReturn(metaSalva);
-        BDDMockito.given(metaService.salvarMeta(any(MetaRepository.class),(any(Long.class)), (any(Meta.class))))
+        BDDMockito.given(metaService.salvarMeta((any(Long.class)), (any(Meta.class))))
                 .willReturn(metaSalva);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders

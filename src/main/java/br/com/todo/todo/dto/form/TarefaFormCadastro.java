@@ -11,6 +11,9 @@ public class TarefaFormCadastro {
         this.descricao = descricao;
     }
 
+    public TarefaFormCadastro() {
+    }
+
     public String getDescricao() {
         return descricao;
     }
