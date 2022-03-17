@@ -22,7 +22,7 @@ public class MetaService {
 
     private MetaRepository metaRepository;
 
-    @Autowired
+
     private TarefaRepository tarefaRepository;
 
     @Autowired
@@ -31,9 +31,11 @@ public class MetaService {
     @Autowired
     private ParalisacaoMetaService paralisacaoMetaService;
 
-    public MetaService(UsuarioRepository usuarioRepository, MetaRepository metaRepository) {
+    public MetaService(UsuarioRepository usuarioRepository, MetaRepository metaRepository,
+                       TarefaRepository tarefaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.metaRepository = metaRepository;
+        this.tarefaRepository = tarefaRepository;
     }
 
     public Meta salvarMeta(Long idUsuario, Meta meta) throws Exception {
@@ -47,6 +49,15 @@ public class MetaService {
         }
     }
 
+    public Meta atualizarMeta(Meta meta, MetaFormAtualizacao form) {
+        meta.setObjetivo(form.getObjetivo());
+        return metaRepository.save(meta);
+    }
+
+    public void deletarMeta(Long id) {
+        metaRepository.deleteById(id);
+    }
+
     public Meta concluirMeta(Meta meta) throws TarefasInacabadasException {
 
         if (!conclusaoMetaService.validarTarefas(meta)) {
@@ -58,15 +69,6 @@ public class MetaService {
 
     }
 
-    public void deletarMeta(Long id) throws Exception{
-        Optional<Meta> meta = metaRepository.findById(id);
-        if(meta.isEmpty()){
-            throw new Exception("Meta inexistente") ;
-        }else{
-            metaRepository.deleteById(id);
-        }
-    }
-
     public Meta paralisarMeta(Meta meta) {
         paralisacaoMetaService.paralisar(meta);
         return metaRepository.save(meta);
@@ -74,11 +76,6 @@ public class MetaService {
 
     public Meta retomarMeta(Meta meta) {
         paralisacaoMetaService.retomar(meta);
-        return metaRepository.save(meta);
-    }
-
-    public Meta atualizarMeta(Meta meta, MetaFormAtualizacao form) {
-        meta.setObjetivo(form.getObjetivo());
         return metaRepository.save(meta);
     }
 
@@ -95,11 +92,28 @@ public class MetaService {
                 .filter(tarefa -> tarefa.getId() == idTarefa)
                 .findFirst();
         if(tarefaMeta.isEmpty()){
-            throw new TarefaNaoPresenteNaMetaException();
+            throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
         }
 
         tarefaMeta.get().setConcluida(true);
         tarefaRepository.save(tarefaMeta.get());
+        return metaPresente;
+    }
+
+    public Meta atualizarTarefa(Meta metaPresente, Long idTarefa, TarefaFormCadastro form)
+            throws TarefaNaoPresenteNaMetaException {
+
+        Optional<Tarefa> tarefaMeta = metaPresente.getTarefasDaMeta()
+                .stream()
+                .filter(tarefa -> tarefa.getId() == idTarefa)
+                .findFirst();
+        if(tarefaMeta.isEmpty()){
+            throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
+        }
+
+        tarefaMeta.get().setDescricao(form.getDescricao());
+        tarefaRepository.save(tarefaMeta.get());
+
         return metaPresente;
     }
 
@@ -110,7 +124,7 @@ public class MetaService {
                 .filter(tarefa -> tarefa.getId() == idTarefa)
                 .findFirst();
         if(tarefaMeta.isEmpty()){
-            throw new TarefaNaoPresenteNaMetaException();
+            throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
         }
 
         tarefaMeta.get().setConcluida(true);
@@ -118,20 +132,5 @@ public class MetaService {
         return metaPresente;
     }
 
-    public Meta atualizarTarefa(Meta metaPresente, Long idTarefa, TarefaFormCadastro form)
-                                                                    throws TarefaNaoPresenteNaMetaException {
 
-        Optional<Tarefa> tarefaMeta = metaPresente.getTarefasDaMeta()
-                .stream()
-                .filter(tarefa -> tarefa.getId() == idTarefa)
-                .findFirst();
-        if(tarefaMeta.isEmpty()){
-            throw new TarefaNaoPresenteNaMetaException();
-        }
-
-        tarefaMeta.get().setDescricao(form.getDescricao());
-        tarefaRepository.save(tarefaMeta.get());
-
-        return metaPresente;
-    }
 }

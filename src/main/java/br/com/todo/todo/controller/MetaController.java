@@ -174,13 +174,12 @@ public class MetaController {
     @DeleteMapping("/{id}")
     public ResponseEntity deletarMeta(@PathVariable Long id) {
 
-        try {
+            Optional<Meta> meta = metaRepository.findById(id);
+            if(meta.isEmpty()){
+                return ResponseEntity.notFound().build();
+            }
             metaService.deletarMeta(id);
             return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-
-            return ResponseEntity.notFound().build();
-        }
     }
 
     @DeleteMapping("/deletar-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
