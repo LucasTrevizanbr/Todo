@@ -11,4 +11,8 @@ public class TarefaNaoPresenteNaMetaException extends Exception {
     public TarefaNaoPresenteNaMetaException() {
 
     }
+
+    public String getMensagem() {
+        return mensagem;
+    }
 }

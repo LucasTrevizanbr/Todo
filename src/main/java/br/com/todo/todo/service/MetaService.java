@@ -66,7 +66,6 @@ public class MetaService {
             conclusaoMetaService.concluirMeta(meta);
         }
         return metaRepository.save(meta);
-
     }
 
     public Meta paralisarMeta(Meta meta) {

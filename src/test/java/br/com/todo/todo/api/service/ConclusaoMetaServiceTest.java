@@ -60,6 +60,8 @@ public class ConclusaoMetaServiceTest {
             Assertions.assertThat(meta.getStatus()).isNotEqualTo(Status.CONCLUIDA);
         }
 
-
     }
+
+
+
 }

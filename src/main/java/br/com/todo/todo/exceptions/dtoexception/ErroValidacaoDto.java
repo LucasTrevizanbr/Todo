@@ -1,4 +1,4 @@
-package br.com.todo.todo.dto;
+package br.com.todo.todo.exceptions.dtoexception;
 
 public class ErroValidacaoDto {
 

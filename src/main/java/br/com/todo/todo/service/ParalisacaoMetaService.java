@@ -3,12 +3,16 @@ package br.com.todo.todo.service;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 public class ParalisacaoMetaService {
+
+    @Autowired
+    private AplicarPontosService aplicarPontosService;
 
     public void paralisar(Meta meta) {
         HistoricoDatas datas = meta.getHistoricoDatasMeta();
@@ -20,11 +24,10 @@ public class ParalisacaoMetaService {
 
     public void retomar(Meta meta){
 
-        HistoricoDatas datas = meta.getHistoricoDatasMeta();
-        datas.setDataRetornoDaParalisacao(LocalDateTime.now());
+        meta.getHistoricoDatasMeta().setDataRetornoDaParalisacao(LocalDateTime.now());
 
-        meta.setHistoricoDatasMeta(datas);
+        aplicarPontosService.aplicarPenalidadeAposRetomada(meta);
+
         meta.setStatus(Status.RETOMADA);
-
     }
 }

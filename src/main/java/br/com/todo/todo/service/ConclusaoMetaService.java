@@ -4,6 +4,7 @@ import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.Tarefa;
 import br.com.todo.todo.model.complemento.Status;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,9 @@ import java.util.List;
 
 @Service
 public class ConclusaoMetaService {
+
+    @Autowired
+    private AplicarPontosService aplicarPontosService;
 
     public boolean validarTarefas(Meta meta) throws TarefasInacabadasException {
 
@@ -27,5 +31,6 @@ public class ConclusaoMetaService {
     public void concluirMeta(Meta metaPresente) {
         metaPresente.setStatus(Status.CONCLUIDA);
         metaPresente.getHistoricoDatasMeta().setDataFinalizacaoReal(LocalDateTime.now());
+        aplicarPontosService.aplicarPontosPorConclusao(metaPresente);
     }
 }

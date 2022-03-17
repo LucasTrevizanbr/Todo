@@ -36,10 +36,10 @@ public class MetaController {
     @Autowired
     private MetaService metaService;
 
-    @GetMapping
-    public ResponseEntity<Page<MetaDtoSimples>> buscarMetasPaginadas(
+    @GetMapping("/minhas-metas/{idUsuario}")
+    public ResponseEntity<Page<MetaDtoSimples>> buscarMetasPaginadas( @PathVariable Long idUsuario,
             @PageableDefault(sort = "id", direction = Sort.Direction.ASC,page = 0, size = 10) Pageable paginacao){
-        Page<Meta> metas = metaRepository.findAll(paginacao);
+        Page<Meta> metas = metaRepository.findAllByUsuarioId(idUsuario, paginacao);
         Page<MetaDtoSimples> metasDto = metas.map(MetaDtoSimples::new);
         return ResponseEntity.ok(metasDto);
     }
@@ -95,29 +95,20 @@ public class MetaController {
 
     @PutMapping("/concluir/{id}")
     public ResponseEntity<MetaDtoDetalhado> concluirMeta(@PathVariable Long id) {
-        try {
-            Optional<Meta> meta = metaRepository.findById(id);
-            if (meta.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            }
-            Meta metaConcluida = metaService.concluirMeta(meta.get());
-            MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaConcluida);
-            return ResponseEntity.ok().body(dtoMetaDetalhada);
 
-        } catch (TarefasInacabadasException ex) {
-
-            List<TarefaDtoDetalhado> dtoTarefasNaoConcluidas = ex.getTarefasNaoConcluidas();
-            MetaDtoDetalhado metaDtoErro = new MetaDtoDetalhado();
-            metaDtoErro.setTarefasDaMeta(dtoTarefasNaoConcluidas);
-
-            return ResponseEntity.badRequest().body(metaDtoErro);
+        Optional<Meta> meta = metaRepository.findById(id);
+        if (meta.isEmpty()) {
+            return ResponseEntity.notFound().build();
         }
+        Meta metaConcluida = metaService.concluirMeta(meta.get());
+        MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaConcluida);
+        return ResponseEntity.ok().body(dtoMetaDetalhada);
     }
 
     @PutMapping("/concluir-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
-    public ResponseEntity<MetaDtoDetalhado> concluirTarefa(@PathVariable Long idMeta,
-                                                           @PathVariable Long idTarefa){
-        try{
+    public ResponseEntity<MetaDtoDetalhado> concluirTarefa(@PathVariable Long idMeta, @PathVariable Long idTarefa)
+            throws TarefaNaoPresenteNaMetaException {
+
             Optional<Meta> meta = metaRepository.findById(idMeta);
             if(meta.isEmpty()){
                 return ResponseEntity.badRequest().build();
@@ -126,27 +117,22 @@ public class MetaController {
             metaPresente = metaService.concluirTarefa(metaPresente, idTarefa);
             return ResponseEntity.ok(new MetaDtoDetalhado(metaPresente));
 
-        }catch (TarefaNaoPresenteNaMetaException ex){
-            return ResponseEntity.badRequest().build();
-        }
     }
 
     @PutMapping("/atualizar-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
-    public ResponseEntity<MetaDtoDetalhado> atualizarTarefa(@PathVariable Long idMeta,
-                                                            @PathVariable Long idTarefa,
-                                                            @RequestBody @Valid TarefaFormCadastro form){
-        try{
-            Optional<Meta> meta = metaRepository.findById(idMeta);
-            if(meta.isEmpty()){
-                return ResponseEntity.badRequest().build();
-            }
-            Meta metaPresente = meta.get();
-            metaPresente = metaService.atualizarTarefa(metaPresente, idTarefa, form);
-            return ResponseEntity.ok(new MetaDtoDetalhado(metaPresente));
+    public ResponseEntity<MetaDtoDetalhado> atualizarTarefa(@PathVariable Long idMeta, @PathVariable Long idTarefa,
+                                                            @RequestBody @Valid TarefaFormCadastro form)
+            throws TarefaNaoPresenteNaMetaException {
 
-        }catch (TarefaNaoPresenteNaMetaException ex){
+        Optional<Meta> meta = metaRepository.findById(idMeta);
+        if (meta.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
+        Meta metaPresente = meta.get();
+        metaPresente = metaService.atualizarTarefa(metaPresente, idTarefa, form);
+        return ResponseEntity.ok(new MetaDtoDetalhado(metaPresente));
+
+
     }
 
     @PutMapping("/paralisar/{id}")
@@ -183,21 +169,17 @@ public class MetaController {
     }
 
     @DeleteMapping("/deletar-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
-    public ResponseEntity<MetaDtoDetalhado> excluirTarefa(@PathVariable Long idMeta,
-                                                          @PathVariable Long idTarefa){
-        try{
-            Optional<Meta> meta = metaRepository.findById(idMeta);
-            if(meta.isEmpty()){
-                return ResponseEntity.badRequest().build();
-            }
-            Meta metaPresente = meta.get();
-            metaPresente = metaService.deletarTarefa(metaPresente, idTarefa);
-            return ResponseEntity.ok(new MetaDtoDetalhado(metaPresente));
+    public ResponseEntity<MetaDtoDetalhado> excluirTarefa(@PathVariable Long idMeta, @PathVariable Long idTarefa)
+            throws TarefaNaoPresenteNaMetaException {
 
-        }catch (TarefaNaoPresenteNaMetaException ex){
+        Optional<Meta> meta = metaRepository.findById(idMeta);
+        if (meta.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-    }
+        Meta metaPresente = meta.get();
+        metaPresente = metaService.deletarTarefa(metaPresente, idTarefa);
+        return ResponseEntity.ok(new MetaDtoDetalhado(metaPresente));
 
+    }
 
 }

@@ -1,6 +1,8 @@
 package br.com.todo.todo.exceptions;
 
-import br.com.todo.todo.dto.ErroValidacaoDto;
+import br.com.todo.todo.exceptions.dtoexception.ErroValidacaoDto;
+import br.com.todo.todo.dto.TarefaDtoDetalhado;
+import br.com.todo.todo.exceptions.dtoexception.TarefasInacabadasDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -33,5 +35,20 @@ public class ErroApi {
         });
         return errosDto;
     }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TarefasInacabadasException.class)
+    public TarefasInacabadasDto handlerTarefasInacabadas(TarefasInacabadasException exception) {
+        List<TarefaDtoDetalhado> tarefasNaoConcluidas = exception.getTarefasNaoConcluidas();
+        TarefasInacabadasDto dtoErro = new TarefasInacabadasDto(tarefasNaoConcluidas);
+        return dtoErro;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(TarefaNaoPresenteNaMetaException.class)
+    public TarefaNaoPresenteNaMetaException handlerTarefaNaoPresente(TarefaNaoPresenteNaMetaException exception) {
+        return exception;
+    }
+
 
 }

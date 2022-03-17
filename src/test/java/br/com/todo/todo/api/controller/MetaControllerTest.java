@@ -85,10 +85,10 @@ public class MetaControllerTest {
         Page<Meta> metasPaginadas = new PageImpl<>(metas);
 
 
-        BDDMockito.given(metaRepository.findAll(any(PageRequest.class))).willReturn(metasPaginadas);
+        BDDMockito.given(metaRepository.findAllByUsuarioId(anyLong(),any(PageRequest.class))).willReturn(metasPaginadas);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(META_URI)
+                .get(META_URI +"/minhas-metas/" +id)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
@@ -131,7 +131,7 @@ public class MetaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve atualizar uma tarefa relacionada a Meta")
+    @DisplayName("Deve atualizar uma tarefa relacionada a Meta e retornar o Json da Meta")
     public void atualizarTarefaTest() throws Exception {
         Long id = 1l;
         Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
@@ -164,7 +164,7 @@ public class MetaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve deletar uma tarefa relacionada a Meta")
+    @DisplayName("Deve deletar uma tarefa relacionada a Meta e retornar o Json da Meta")
     public void deletarTarefaTest() throws Exception {
         Long id = 1l;
         Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
@@ -193,7 +193,7 @@ public class MetaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve concluir uma tarefa existente na Meta")
+    @DisplayName("Deve concluir uma tarefa existente na Meta e retornar o Json da Meta")
     public void concluirTarefaTest() throws Exception {
         Long id = 1l;
         Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
@@ -351,7 +351,7 @@ public class MetaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retornar um Json de DTO detalhado de Meta apenas com as tarefas que não foram concluidas, resto null")
+    @DisplayName("Deve retornar um Json de TarefaDto detalhado com as tarefas que não foram concluidas")
     public void naoDeveConcluirMetaTest() throws Exception {
 
         Long id = 1L;
@@ -372,18 +372,11 @@ public class MetaControllerTest {
 
         mockMvc.perform(request)
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("id").isEmpty())
-                .andExpect(jsonPath("objetivo").isEmpty())
-                .andExpect(jsonPath("historicoDatas").isEmpty())
-                .andExpect(jsonPath("status").isEmpty())
-                .andExpect(jsonPath("dificuldade").isEmpty())
-                .andExpect(jsonPath("tarefasDaMeta").isNotEmpty())
-                .andExpect(jsonPath("usuario").isEmpty());
-
+                .andExpect(jsonPath("tarefasNaoConcluidas").isNotEmpty());
     }
 
     @Test
-    @DisplayName("Deve deletar uma Meta")
+    @DisplayName("Deve deletar uma Meta e retornar no content")
     public void deletarMetaTest() throws Exception {
 
         Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
@@ -403,7 +396,7 @@ public class MetaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve paralisar a meta")
+    @DisplayName("Deve paralisar a meta retornar seu Json")
     public void deveParalisarMeta() throws Exception {
 
         Long id = 1l;
@@ -432,7 +425,7 @@ public class MetaControllerTest {
     }
 
     @Test
-    @DisplayName("Deve retomar a meta")
+    @DisplayName("Deve retomar a meta e retornar seu Json")
     public void deveRetomarMeta() throws Exception {
 
         Long id = 1l;
