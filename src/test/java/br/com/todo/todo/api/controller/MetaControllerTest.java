@@ -109,6 +109,8 @@ public class MetaControllerTest {
         meta.adicionarTarefa(tarefa);
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         String metaJson = mapper.writeValueAsString(tarefa);
 
         BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
@@ -142,6 +144,9 @@ public class MetaControllerTest {
         meta.adicionarTarefa(tarefa);
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
         String metaJson = mapper.writeValueAsString(tarefa);
 
         BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
@@ -173,9 +178,6 @@ public class MetaControllerTest {
         Tarefa tarefa = new Tarefa("EcmaScript 6");
         tarefa.setId(2L);
         meta.adicionarTarefa(tarefa);
-
-        ObjectMapper mapper = new ObjectMapper();
-        String metaJson = mapper.writeValueAsString(tarefa);
 
         BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
         BDDMockito.given(metaService.deletarTarefa(any(Meta.class), anyLong())).willReturn(meta);

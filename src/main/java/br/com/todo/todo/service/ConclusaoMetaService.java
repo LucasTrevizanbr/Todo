@@ -28,9 +28,20 @@ public class ConclusaoMetaService {
         return true;
     }
 
+    public boolean validarStatus(Meta meta) {
+        if(meta.getStatus() == Status.PARADA) {
+            return false;
+        }
+
+        return true;
+    }
+
     public void concluirMeta(Meta metaPresente) {
         metaPresente.setStatus(Status.CONCLUIDA);
         metaPresente.getHistoricoDatasMeta().setDataFinalizacaoReal(LocalDateTime.now());
-        aplicarPontosService.aplicarPontosPorConclusao(metaPresente);
+        int pontosAplicaveis = metaPresente.getPontos() + aplicarPontosService.pontosPorConclusao(metaPresente);
+        metaPresente.setPontos(pontosAplicaveis);
     }
+
+
 }

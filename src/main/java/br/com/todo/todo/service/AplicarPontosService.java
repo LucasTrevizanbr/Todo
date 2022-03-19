@@ -1,6 +1,7 @@
 package br.com.todo.todo.service;
 
 import br.com.todo.todo.model.Meta;
+import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.utils.DataUtils;
@@ -29,17 +30,50 @@ public class AplicarPontosService {
         meta.setPontos(pontosAtuais - pontosDescontados);
     }
 
-    public void aplicarPontosPorConclusao(Meta meta) {
+    public int pontosPorConclusao(Meta meta) {
 
         HistoricoDatas datas = meta.getHistoricoDatasMeta();
+
+        int pontosBaseadoEmData = calcularPontosBaseadoEmData(datas);
+        int pontosBaseadosEmStatus = calcularPontosBaseadoEmStatus(meta.getStatus());
+        int pontoBaseadoEmDificuldade = calcularPontosBaseadoEmDificuldade (meta.getDificuldade());
+
+        return pontosBaseadoEmData + pontosBaseadosEmStatus + pontoBaseadoEmDificuldade;
+    }
+
+
+    private int calcularPontosBaseadoEmDificuldade(Dificuldade dificuldade) {
+        int pontos = 0;
+        switch (dificuldade){
+            case FACIL: pontos = 2;
+                break;
+            case MEDIO: pontos = 4;
+                break;
+            case DIFICIL: pontos = 6;
+            break;
+        }
+        return pontos;
+    }
+
+    private int calcularPontosBaseadoEmStatus(Status status) {
+        int pontos = 0;
+        switch (status){
+            case RETOMADA : pontos = 2;
+            break;
+            case CONCLUIDA: pontos = 4;
+            break;
+        }
+         return pontos;
+    }
+
+    private int calcularPontosBaseadoEmData(HistoricoDatas datas) {
         LocalDateTime dataCriacaoMeta = datas.getDataCriacao();
         LocalDateTime dataFinalEstipulada = datas.getDataFinalizacaoEstipulada();
         LocalDateTime dataFinalizacaoReal = datas.getDataFinalizacaoReal();
 
         if(dataCriacaoMeta.toLocalDate().equals(dataFinalEstipulada.toLocalDate())){
-            int diasPassadosAteConclusao = DataUtils.diasEntreDatas(dataCriacaoMeta, dataFinalEstipulada);
-            int pontosAtuais = meta.getPontos();
-            meta.setPontos(pontosAtuais + diasPassadosAteConclusao);
+            int pontosPorDia = DataUtils.diasEntreDatas(dataCriacaoMeta, dataFinalEstipulada);
+            return pontosPorDia;
         }else{
             int pontosBase = DataUtils.diasEntreDatas(dataCriacaoMeta, dataFinalEstipulada);
             int diasPassadosAteConclusao = DataUtils.diasEntreDatas(dataFinalEstipulada, dataFinalizacaoReal);
@@ -51,15 +85,7 @@ public class AplicarPontosService {
             }
 
             int pontosReduzidos = (int) Math.round(penalidade);
-            int pontosAtuais = meta.getPontos();
-            int pontoPorRetomada = 0;
-
-            if(meta.getStatus().equals(Status.RETOMADA)){
-                pontoPorRetomada = 2;
-            }
-
-            meta.setPontos(pontosAtuais + pontosBase - pontosReduzidos + pontoPorRetomada);
+            return pontosBase - pontosReduzidos;
         }
-
     }
 }

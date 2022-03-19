@@ -61,7 +61,6 @@ public class MetaRepositoryTest {
         Meta metaAtualizada = metaRepository.save(meta);
 
         Assertions.assertThat(metaAtualizada.getObjetivo()).isEqualTo("Gerenciar Agência");
-        Assertions.assertThat(metaAtualizada.getId()).isEqualTo(1L);
     }
     
     @Test

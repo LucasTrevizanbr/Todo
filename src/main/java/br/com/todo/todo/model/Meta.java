@@ -28,7 +28,7 @@ public class Meta {
     @Enumerated(EnumType.STRING)
     private Dificuldade dificuldade;
 
-    @OneToMany(mappedBy = "meta", cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "meta")
     private List<Tarefa> tarefasDaMeta = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

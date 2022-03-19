@@ -1,5 +1,6 @@
 package br.com.todo.todo.exceptions;
 
+import br.com.todo.todo.exceptions.dtoexception.ErroGenericoDto;
 import br.com.todo.todo.exceptions.dtoexception.ErroValidacaoDto;
 import br.com.todo.todo.dto.TarefaDtoDetalhado;
 import br.com.todo.todo.exceptions.dtoexception.TarefasInacabadasDto;
@@ -46,9 +47,16 @@ public class ErroApi {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(TarefaNaoPresenteNaMetaException.class)
-    public TarefaNaoPresenteNaMetaException handlerTarefaNaoPresente(TarefaNaoPresenteNaMetaException exception) {
-        return exception;
+    public ErroGenericoDto handlerTarefaNaoPresente(TarefaNaoPresenteNaMetaException exception) {
+        ErroGenericoDto erroDto = new ErroGenericoDto(exception.getMensagem());
+        return erroDto;
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MetaParadaException.class)
+    public ErroGenericoDto handlerMetaParadaException(MetaParadaException exception) {
+        ErroGenericoDto erroDto = new ErroGenericoDto(exception.getMensagem());
+        return erroDto;
+    }
 
 }

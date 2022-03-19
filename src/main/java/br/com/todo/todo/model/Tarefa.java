@@ -1,6 +1,7 @@
 package br.com.todo.todo.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 
@@ -16,7 +17,7 @@ public class Tarefa {
     private String descricao;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @JsonIgnoreProperties("tarefasDaMeta")
     private Meta meta;
 
     public Tarefa(String descricao) {
@@ -24,6 +25,11 @@ public class Tarefa {
     }
 
     public Tarefa() {
+    }
+
+    @PreRemove
+    public void desassociarMeta(){
+        this.setMeta(null);
     }
 
     public long getId() {

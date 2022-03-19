@@ -86,13 +86,13 @@ public class AplicarPontosServiceTest {
         meta.getHistoricoDatasMeta().setDataFinalizacaoEstipulada(dataFinalizacaoReal);
         meta.setPontos(-2);
 
-        aplicarPontosService.aplicarPontosPorConclusao(meta);
+        int pontosAplicaveis = aplicarPontosService.pontosPorConclusao(meta);
 
-        Assertions.assertThat(meta.getPontos()).isEqualTo(25);
+        Assertions.assertThat(pontosAplicaveis).isEqualTo(25);
     }
 
     @Test
-    @DisplayName("Concede 1 ponto por dia de duracao estipulada, aplica -0.5 pontos por cada dia passado após finalizacao")
+    @DisplayName("Deve aplicar pontos de acordo com duração da meta, dificuldade e status")
     public void deveAplicarPontosDeConclusaoComPenalidadeDeAtraso(){
 
         LocalDateTime dataFinalizacaoEstipulada =
@@ -100,25 +100,34 @@ public class AplicarPontosServiceTest {
         LocalDateTime dataCriacaoMeta =
                 LocalDateTime.of(2022, 3, 1, 13, 22, 00);
 
-        Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(dataFinalizacaoEstipulada),
-                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
+        Meta meta = new Meta("Aprender Kotlin",
+                new HistoricoDatas(dataFinalizacaoEstipulada),
+                Status.RETOMADA,
+                new Usuario("Jorberto"),
+                Dificuldade.DIFICIL);
         meta.getHistoricoDatasMeta().setDataCriacao(dataCriacaoMeta);
-
 
         LocalDateTime dataFinalizacaoReal =
                 LocalDateTime.of(2022, 3, 31, 16, 22, 00);
 
-        meta.getHistoricoDatasMeta().setDataFinalizacaoReal(dataFinalizacaoReal);
+        meta.getHistoricoDatasMeta().setDataFinalizacaoReal(dataFinalizacaoEstipulada);
         meta.setPontos(0);
 
-        aplicarPontosService.aplicarPontosPorConclusao(meta);
+        int pontosBaseTarefaNoPrazo = 27;
+        int pontosPorStatusRetomada = 2;
+        int pontosPorDificuldadeDificil = 6;
+        int pontosNegativosPorDiaDeAtraso = 0;
 
-        Assertions.assertThat(meta.getPontos()).isEqualTo(25);
+        int pontosQueDeveraoSerConcedidos = pontosBaseTarefaNoPrazo + pontosPorStatusRetomada
+                + pontosPorDificuldadeDificil - pontosNegativosPorDiaDeAtraso;
+
+        int pontosAplicaveis = aplicarPontosService.pontosPorConclusao(meta);
+
+        Assertions.assertThat(pontosAplicaveis).isEqualTo(pontosQueDeveraoSerConcedidos);
     }
 
     @Test
-    @DisplayName("Concede 1 ponto por dia de duracao estipulada, aplica -0.5 pontos por cada dia passado após" +
-            " finalizacao e se a Meta foi retomada concede 2 pontos extras")
+    @DisplayName("Deve aplicar pontos de acordo com duração da meta, dificuldade e status")
     public void deveAplicarPontosDeConclusaoComPenalidadeDeAtrasoMaisBonusPorRetomar(){
 
         LocalDateTime dataFinalizacaoEstipulada =
@@ -127,7 +136,7 @@ public class AplicarPontosServiceTest {
                 LocalDateTime.of(2022, 3, 1, 13, 22, 00);
 
         Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(dataFinalizacaoEstipulada),
-                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
+                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.FACIL);
         meta.getHistoricoDatasMeta().setDataCriacao(dataCriacaoMeta);
 
 
@@ -136,10 +145,17 @@ public class AplicarPontosServiceTest {
 
         meta.getHistoricoDatasMeta().setDataFinalizacaoReal(dataFinalizacaoReal);
         meta.setPontos(0);
-        meta.setStatus(Status.RETOMADA);
 
-        aplicarPontosService.aplicarPontosPorConclusao(meta);
+        int pontosBaseTarefaNoPrazo = 25;
+        int pontosPorStatusRetomada = 0;
+        int pontosPorDificuldadeFacil = 2;
+        int pontosNegativosPorDiaDeAtraso = 3;
 
-        Assertions.assertThat(meta.getPontos()).isEqualTo(24);
+        int pontosQueDeveraoSerConcedidos = pontosBaseTarefaNoPrazo + pontosPorStatusRetomada
+                + pontosPorDificuldadeFacil - pontosNegativosPorDiaDeAtraso;
+
+        int pontosAplicaveis = aplicarPontosService.pontosPorConclusao(meta);
+
+        Assertions.assertThat(pontosAplicaveis).isEqualTo(pontosQueDeveraoSerConcedidos);
     }
 }

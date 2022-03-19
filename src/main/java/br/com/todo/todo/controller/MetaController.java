@@ -18,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -54,6 +55,7 @@ public class MetaController {
     }
 
     @PostMapping
+    @Transactional
     public ResponseEntity<MetaDtoSimples> criarMeta(@RequestBody @Valid MetaFormCadastro metaForm,
                                                     @Autowired UriComponentsBuilder uriBuilder) {
 
@@ -69,19 +71,8 @@ public class MetaController {
         }
     }
 
-    @PostMapping("/criar-tarefa/{id}")
-    public ResponseEntity<MetaDtoDetalhado> criarTarefa(@PathVariable Long id,
-                                                        @RequestBody @Valid TarefaFormCadastro form){
-        Optional<Meta> meta = metaRepository.findById(id);
-        if(meta.isEmpty()){
-            return ResponseEntity.badRequest().build();
-        }
-        Meta metaPresente = meta.get();
-        metaPresente = metaService.criarTarefa(metaPresente, form);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new MetaDtoDetalhado(metaPresente));
-    }
-
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<MetaDtoDetalhado> atualizarMeta(@PathVariable Long id,
                                                           @RequestBody @Valid MetaFormAtualizacao form){
         Optional<Meta> meta = metaRepository.findById(id);
@@ -94,6 +85,7 @@ public class MetaController {
     }
 
     @PutMapping("/concluir/{id}")
+    @Transactional
     public ResponseEntity<MetaDtoDetalhado> concluirMeta(@PathVariable Long id) {
 
         Optional<Meta> meta = metaRepository.findById(id);
@@ -101,11 +93,62 @@ public class MetaController {
             return ResponseEntity.notFound().build();
         }
         Meta metaConcluida = metaService.concluirMeta(meta.get());
+
         MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaConcluida);
         return ResponseEntity.ok().body(dtoMetaDetalhada);
     }
 
+    @PutMapping("/paralisar/{id}")
+    @Transactional
+    public ResponseEntity<MetaDtoDetalhado> paralisarMeta(@PathVariable Long id) {
+        Optional<Meta> meta = metaRepository.findById(id);
+        if (meta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Meta metaParalisada = metaService.paralisarMeta(meta.get());
+        MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaParalisada);
+        return ResponseEntity.ok().body(dtoMetaDetalhada);
+    }
+
+    @PutMapping("/retomar/{id}")
+    @Transactional
+    public ResponseEntity<MetaDtoDetalhado> retomarMeta(@PathVariable Long id) {
+        Optional<Meta> meta = metaRepository.findById(id);
+        if (meta.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Meta metaParalisada = metaService.retomarMeta(meta.get());
+        MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaParalisada);
+        return ResponseEntity.ok().body(dtoMetaDetalhada);
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity deletarMeta(@PathVariable Long id) {
+
+        Optional<Meta> meta = metaRepository.findById(id);
+        if(meta.isEmpty()){
+            return ResponseEntity.notFound().build();
+        }
+        metaService.deletarMeta(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/criar-tarefa/{id}")
+    @Transactional
+    public ResponseEntity<MetaDtoDetalhado> criarTarefa(@PathVariable Long id,
+                                                        @RequestBody @Valid TarefaFormCadastro form){
+        Optional<Meta> meta = metaRepository.findById(id);
+        if(meta.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        Meta metaPresente = meta.get();
+        metaPresente = metaService.criarTarefa(metaPresente, form);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new MetaDtoDetalhado(metaPresente));
+    }
+
     @PutMapping("/concluir-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
+    @Transactional
     public ResponseEntity<MetaDtoDetalhado> concluirTarefa(@PathVariable Long idMeta, @PathVariable Long idTarefa)
             throws TarefaNaoPresenteNaMetaException {
 
@@ -120,6 +163,7 @@ public class MetaController {
     }
 
     @PutMapping("/atualizar-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
+    @Transactional
     public ResponseEntity<MetaDtoDetalhado> atualizarTarefa(@PathVariable Long idMeta, @PathVariable Long idTarefa,
                                                             @RequestBody @Valid TarefaFormCadastro form)
             throws TarefaNaoPresenteNaMetaException {
@@ -131,44 +175,10 @@ public class MetaController {
         Meta metaPresente = meta.get();
         metaPresente = metaService.atualizarTarefa(metaPresente, idTarefa, form);
         return ResponseEntity.ok(new MetaDtoDetalhado(metaPresente));
-
-
-    }
-
-    @PutMapping("/paralisar/{id}")
-    public ResponseEntity<MetaDtoDetalhado> paralisarMeta(@PathVariable Long id) {
-        Optional<Meta> meta = metaRepository.findById(id);
-        if (meta.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Meta metaParalisada = metaService.paralisarMeta(meta.get());
-        MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaParalisada);
-        return ResponseEntity.ok().body(dtoMetaDetalhada);
-    }
-
-    @PutMapping("/retomar/{id}")
-    public ResponseEntity<MetaDtoDetalhado> retomarMeta(@PathVariable Long id) {
-        Optional<Meta> meta = metaRepository.findById(id);
-        if (meta.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        Meta metaParalisada = metaService.retomarMeta(meta.get());
-        MetaDtoDetalhado dtoMetaDetalhada = new MetaDtoDetalhado(metaParalisada);
-        return ResponseEntity.ok().body(dtoMetaDetalhada);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity deletarMeta(@PathVariable Long id) {
-
-            Optional<Meta> meta = metaRepository.findById(id);
-            if(meta.isEmpty()){
-                return ResponseEntity.notFound().build();
-            }
-            metaService.deletarMeta(id);
-            return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/deletar-tarefa/metaId={idMeta}&tarefaId={idTarefa}")
+    @Transactional
     public ResponseEntity<MetaDtoDetalhado> excluirTarefa(@PathVariable Long idMeta, @PathVariable Long idTarefa)
             throws TarefaNaoPresenteNaMetaException {
 

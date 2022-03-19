@@ -30,6 +30,8 @@ public class MetaFormCadastro {
     @NotNull
     private Long idUsuario;
 
+    private Integer pontos = 0;
+
     public MetaFormCadastro(String objetivo, LocalDateTime dataFinalEstipulada,
                 Dificuldade dificuldade, List<String> descTarefasDaMeta, Long idUsuario) {
         this.objetivo = objetivo;
@@ -50,11 +52,13 @@ public class MetaFormCadastro {
         meta.setStatus(metaForm.getStatus());
         meta.setDificuldade(metaForm.getDificuldade());
 
-        if(metaForm.descricaoTarefasDaMeta != null){
+        if(metaForm.getDescricaoTarefasDaMeta() != null){
             for (String descTarefa : metaForm.descricaoTarefasDaMeta){
                 meta.adicionarTarefa(new TarefaFormCadastro(descTarefa).converterParaEntidade());
             }
         }
+
+        meta.setPontos(metaForm.getPontos());
 
         return meta;
     }
@@ -75,4 +79,11 @@ public class MetaFormCadastro {
         return idUsuario;
     }
 
+    public List<String> getDescricaoTarefasDaMeta() {
+        return descricaoTarefasDaMeta;
+    }
+
+    public Integer getPontos() {
+        return pontos;
+    }
 }

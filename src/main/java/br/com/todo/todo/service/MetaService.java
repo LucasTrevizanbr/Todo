@@ -2,6 +2,7 @@ package br.com.todo.todo.service;
 
 import br.com.todo.todo.dto.form.MetaFormAtualizacao;
 import br.com.todo.todo.dto.form.TarefaFormCadastro;
+import br.com.todo.todo.exceptions.MetaParadaException;
 import br.com.todo.todo.exceptions.TarefaNaoPresenteNaMetaException;
 import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
@@ -31,6 +32,9 @@ public class MetaService {
     @Autowired
     private ParalisacaoMetaService paralisacaoMetaService;
 
+    @Autowired
+    private AplicarPontoUsuarioService pontoUsuarioService;
+
     public MetaService(UsuarioRepository usuarioRepository, MetaRepository metaRepository,
                        TarefaRepository tarefaRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -58,12 +62,16 @@ public class MetaService {
         metaRepository.deleteById(id);
     }
 
-    public Meta concluirMeta(Meta meta) throws TarefasInacabadasException {
+    public Meta concluirMeta(Meta meta) throws TarefasInacabadasException, MetaParadaException {
 
         if (!conclusaoMetaService.validarTarefas(meta)) {
             throw new TarefasInacabadasException(meta.getTarefasDaMeta());
-        } else {
+        }else if(!conclusaoMetaService.validarStatus(meta)){
+            throw new MetaParadaException("Não pode concluir uma meta PARADA!");
+        }
+        else {
             conclusaoMetaService.concluirMeta(meta);
+            pontoUsuarioService.aplicarPontosDaMetaConcluida(meta, usuarioRepository);
         }
         return metaRepository.save(meta);
     }
@@ -94,7 +102,12 @@ public class MetaService {
             throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
         }
 
-        tarefaMeta.get().setConcluida(true);
+        if(tarefaMeta.get().isConcluida()){
+            tarefaMeta.get().setConcluida(false);
+        }else{
+            tarefaMeta.get().setConcluida(true);
+        }
+
         tarefaRepository.save(tarefaMeta.get());
         return metaPresente;
     }
@@ -106,6 +119,7 @@ public class MetaService {
                 .stream()
                 .filter(tarefa -> tarefa.getId() == idTarefa)
                 .findFirst();
+
         if(tarefaMeta.isEmpty()){
             throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
         }
@@ -122,11 +136,13 @@ public class MetaService {
                 .stream()
                 .filter(tarefa -> tarefa.getId() == idTarefa)
                 .findFirst();
+
+        metaPresente.getTarefasDaMeta().remove(tarefaMeta.get());
+
         if(tarefaMeta.isEmpty()){
             throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
         }
 
-        tarefaMeta.get().setConcluida(true);
         tarefaRepository.deleteById(idTarefa);
         return metaPresente;
     }
