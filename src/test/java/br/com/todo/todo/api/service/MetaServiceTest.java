@@ -1,7 +1,6 @@
 package br.com.todo.todo.api.service;
 
 import br.com.todo.todo.dto.form.MetaFormAtualizacao;
-import br.com.todo.todo.dto.form.MetaFormCadastro;
 import br.com.todo.todo.dto.form.TarefaFormCadastro;
 import br.com.todo.todo.exceptions.TarefaNaoPresenteNaMetaException;
 import br.com.todo.todo.model.Meta;
@@ -13,14 +12,13 @@ import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.repository.MetaRepository;
 import br.com.todo.todo.repository.TarefaRepository;
 import br.com.todo.todo.repository.UsuarioRepository;
-import br.com.todo.todo.service.MetaService;
+import br.com.todo.todo.service.meta.MetaService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;

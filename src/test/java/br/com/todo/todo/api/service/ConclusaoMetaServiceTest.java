@@ -7,7 +7,7 @@ import br.com.todo.todo.model.Usuario;
 import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
-import br.com.todo.todo.service.ConclusaoMetaService;
+import br.com.todo.todo.service.meta.ConclusaoMetaService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

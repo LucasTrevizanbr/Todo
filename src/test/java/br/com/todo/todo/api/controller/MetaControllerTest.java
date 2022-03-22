@@ -12,7 +12,7 @@ import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.repository.MetaRepository;
 import br.com.todo.todo.repository.TarefaRepository;
-import br.com.todo.todo.service.MetaService;
+import br.com.todo.todo.service.meta.MetaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;

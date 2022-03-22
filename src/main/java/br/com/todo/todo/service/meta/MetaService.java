@@ -1,4 +1,4 @@
-package br.com.todo.todo.service;
+package br.com.todo.todo.service.meta;
 
 import br.com.todo.todo.dto.form.MetaFormAtualizacao;
 import br.com.todo.todo.dto.form.TarefaFormCadastro;
@@ -11,6 +11,7 @@ import br.com.todo.todo.model.Usuario;
 import br.com.todo.todo.repository.MetaRepository;
 import br.com.todo.todo.repository.TarefaRepository;
 import br.com.todo.todo.repository.UsuarioRepository;
+import br.com.todo.todo.service.pontos.AplicarPontoUsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

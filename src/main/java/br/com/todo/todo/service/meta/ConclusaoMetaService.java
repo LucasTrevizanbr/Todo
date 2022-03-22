@@ -1,9 +1,10 @@
-package br.com.todo.todo.service;
+package br.com.todo.todo.service.meta;
 
 import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.Tarefa;
 import br.com.todo.todo.model.complemento.Status;
+import br.com.todo.todo.service.pontos.AplicarPontosService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

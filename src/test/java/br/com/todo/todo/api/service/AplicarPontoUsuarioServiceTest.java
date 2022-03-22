@@ -6,7 +6,7 @@ import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.repository.UsuarioRepository;
-import br.com.todo.todo.service.AplicarPontoUsuarioService;
+import br.com.todo.todo.service.pontos.AplicarPontoUsuarioService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,9 +20,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-
-
-import static org.mockito.ArgumentMatchers.anyLong;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")

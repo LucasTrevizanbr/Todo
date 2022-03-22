@@ -2,15 +2,13 @@ package br.com.todo.todo.controller;
 
 import br.com.todo.todo.dto.MetaDtoDetalhado;
 import br.com.todo.todo.dto.MetaDtoSimples;
-import br.com.todo.todo.dto.TarefaDtoDetalhado;
 import br.com.todo.todo.dto.form.MetaFormAtualizacao;
 import br.com.todo.todo.dto.form.MetaFormCadastro;
 import br.com.todo.todo.dto.form.TarefaFormCadastro;
 import br.com.todo.todo.exceptions.TarefaNaoPresenteNaMetaException;
-import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.repository.MetaRepository;
-import br.com.todo.todo.service.MetaService;
+import br.com.todo.todo.service.meta.MetaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 @RestController

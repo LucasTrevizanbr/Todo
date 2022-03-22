@@ -1,4 +1,4 @@
-package br.com.todo.todo.service;
+package br.com.todo.todo.service.pontos;
 
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.complemento.Dificuldade;
