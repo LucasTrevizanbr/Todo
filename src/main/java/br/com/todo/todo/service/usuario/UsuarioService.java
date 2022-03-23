@@ -1,6 +1,7 @@
 package br.com.todo.todo.service.usuario;
 
 import br.com.todo.todo.exceptions.SenhaInvalidaException;
+import br.com.todo.todo.exceptions.UsuarioJaCadastradoException;
 import br.com.todo.todo.model.Usuario;
 import br.com.todo.todo.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class UsuarioService {
     public Usuario cadastrarUsuario(Usuario usuario) {
 
         if(repository.findByEmail(usuario.getEmail()).isPresent()){
-            return null;
+            throw new UsuarioJaCadastradoException("Esse email ja esta cadastrado");
         }
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

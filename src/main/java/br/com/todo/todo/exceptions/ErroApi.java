@@ -61,7 +61,14 @@ public class ErroApi {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(SenhaInvalidaException.class)
-    public ErroGenericoDto handlerMetaParadaException(SenhaInvalidaException exception) {
+    public ErroGenericoDto handlerSenhaInvalidaException(SenhaInvalidaException exception) {
+        ErroGenericoDto erroDto = new ErroGenericoDto(exception.getMensagem());
+        return erroDto;
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(UsuarioJaCadastradoException.class)
+    public ErroGenericoDto handlerUsuarioCadastradoException(UsuarioJaCadastradoException exception) {
         ErroGenericoDto erroDto = new ErroGenericoDto(exception.getMensagem());
         return erroDto;
     }

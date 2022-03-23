@@ -16,6 +16,8 @@ public class UsuarioDtoSimples {
 
     private String apelido;
 
+    private TokenDto tokenDto;
+
     private Integer pontosConclusaoMetas;
 
     private LocalDateTime dataCadastro;
@@ -56,5 +58,13 @@ public class UsuarioDtoSimples {
 
     public String getEmail() {
         return email;
+    }
+
+    public TokenDto getTokenDto() {
+        return tokenDto;
+    }
+
+    public void setTokenDto(TokenDto tokenDto) {
+        this.tokenDto = tokenDto;
     }
 }
