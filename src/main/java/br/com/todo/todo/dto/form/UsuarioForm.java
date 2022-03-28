@@ -27,6 +27,16 @@ public class UsuarioForm {
 
     private LocalDateTime dataCadastro = LocalDateTime.now();
 
+    public UsuarioForm(String nome, String apelido, String email, String senha) {
+        this.nome = nome;
+        this.apelido = apelido;
+        this.email = email;
+        this.senha = senha;
+    }
+
+    public UsuarioForm() {
+    }
+
     public Usuario converterParaEntidade() {
         Usuario usuarioEntidade = new Usuario();
         usuarioEntidade.setNome(this.nome);

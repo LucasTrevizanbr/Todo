@@ -7,7 +7,6 @@ import br.com.todo.todo.model.complemento.Dificuldade;
 import br.com.todo.todo.model.complemento.HistoricoDatas;
 import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.repository.MetaRepository;
-import org.apache.tomcat.jni.Local;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +44,7 @@ public class MetaRepositoryTest {
         LocalDateTime dataFinal = LocalDateTime.of(2022, 4, 3, 12,10,00);
         user = new Usuario("Jorberto");
         user.setEmail("jorgeBlablu@hotmail.com");
-        user.setId(1L);
+
         meta = new Meta("Aprender Kotlin", new HistoricoDatas(dataFinal),
                 Status.ANDAMENTO, user, Dificuldade.MEDIO);
         meta.adicionarTarefa(new Tarefa("Aprender paradigma Funcional"));
@@ -53,7 +52,6 @@ public class MetaRepositoryTest {
 
         testEntityManager.persist(user);
         testEntityManager.persist(meta);
-
     }
 
     @Test

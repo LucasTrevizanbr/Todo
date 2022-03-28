@@ -86,9 +86,16 @@ public class AplicarPontosServiceTest {
         meta.getHistoricoDatasMeta().setDataFinalizacaoEstipulada(dataFinalizacaoReal);
         meta.setPontos(-2);
 
+        int pontosBaseTarefaNoPrazo = 27;
+        int pontosPorDificuldadeMedia = 4;
+        int pontosNegativosPorDiaDeAtraso = 0;
+
+        int pontosQueDeveraoSerConcedidos = pontosBaseTarefaNoPrazo + pontosPorDificuldadeMedia
+                - pontosNegativosPorDiaDeAtraso;
+
         int pontosAplicaveis = aplicarPontosService.pontosPorConclusao(meta);
 
-        Assertions.assertThat(pontosAplicaveis).isEqualTo(25);
+        Assertions.assertThat(pontosQueDeveraoSerConcedidos).isEqualTo(pontosAplicaveis);
     }
 
     @Test

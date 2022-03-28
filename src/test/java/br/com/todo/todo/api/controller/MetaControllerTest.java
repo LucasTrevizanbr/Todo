@@ -1,8 +1,6 @@
 package br.com.todo.todo.api.controller;
 
-import br.com.todo.todo.dto.form.MetaFormAtualizacao;
-import br.com.todo.todo.dto.form.MetaFormCadastro;
-import br.com.todo.todo.dto.form.TarefaFormCadastro;
+import br.com.todo.todo.dto.form.*;
 import br.com.todo.todo.exceptions.TarefasInacabadasException;
 import br.com.todo.todo.model.Meta;
 import br.com.todo.todo.model.Tarefa;
@@ -13,42 +11,55 @@ import br.com.todo.todo.model.complemento.Status;
 import br.com.todo.todo.repository.MetaRepository;
 import br.com.todo.todo.repository.TarefaRepository;
 import br.com.todo.todo.service.meta.MetaService;
+import br.com.todo.todo.service.usuario.AutenticacaoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.json.JacksonJsonParser;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.web.FilterChainProxy;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-@WebMvcTest
+@SpringBootTest
+@WithMockUser(username="admin",roles={"USER","ADMIN"})
 public class MetaControllerTest {
 
     static String META_URI = "/api/metas";
@@ -63,14 +74,34 @@ public class MetaControllerTest {
     TarefaRepository tarefaRepository;
 
     @MockBean
+    AutenticacaoService autenticacaoService;
+
+    @MockBean
     MetaService metaService;
+
+
+
+    private ObjectMapper objectMapper;
+
+    private String token;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        //token  = devolverToken();
+    }
+
 
     @Test
     @DisplayName("Deverá devolver uma pagina default de metas DTO simples")
     public void buscarPaginaDeMeta() throws Exception {
         Long id = 1l;
         Meta meta = new Meta("Aprender JS",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
-                new Usuario("Laura"),Dificuldade.FACIL);
+                new Usuario("Jorge"),Dificuldade.FACIL);
         meta.setId(id);
 
         Meta meta2 = new Meta("Kotlin numerics",new HistoricoDatas(LocalDateTime.now()), Status.ANDAMENTO,
@@ -84,7 +115,6 @@ public class MetaControllerTest {
         List<Meta> metas = Arrays.asList(meta,meta2);
         Page<Meta> metasPaginadas = new PageImpl<>(metas);
 
-
         BDDMockito.given(metaRepository.findAllByUsuarioId(anyLong(),any(PageRequest.class))).willReturn(metasPaginadas);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
@@ -97,6 +127,7 @@ public class MetaControllerTest {
                 .andExpect(jsonPath("totalElements").value(2));
     }
 
+
     @Test
     @DisplayName("Deve criar uma tarefa relacionada a Meta")
     public void criarTarefaTest() throws Exception {
@@ -108,18 +139,14 @@ public class MetaControllerTest {
         tarefa.setId(2L);
         meta.adicionarTarefa(tarefa);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-        String metaJson = mapper.writeValueAsString(tarefa);
+        String metaJson = objectMapper.writeValueAsString(tarefa);
 
         BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
         BDDMockito.given(metaService.criarTarefa(any(Meta.class), any(TarefaFormCadastro.class)))
                 .willReturn(meta);
         BDDMockito.given(metaRepository.save(any(Meta.class))).willReturn(meta);
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(META_URI +"/criar-tarefa/"+id)
+        MockHttpServletRequestBuilder request = post(META_URI +"/criar-tarefa/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(metaJson);
@@ -143,11 +170,7 @@ public class MetaControllerTest {
         tarefa.setId(2L);
         meta.adicionarTarefa(tarefa);
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        String metaJson = mapper.writeValueAsString(tarefa);
+        String metaJson = objectMapper.writeValueAsString(tarefa);
 
         BDDMockito.given(metaRepository.findById(anyLong())).willReturn(Optional.of(meta));
         BDDMockito.given(metaService.atualizarTarefa(any(Meta.class),anyLong(), any(TarefaFormCadastro.class)))
@@ -230,11 +253,7 @@ public class MetaControllerTest {
         MetaFormCadastro formMeta = new MetaFormCadastro("Aprender Microsserviço", LocalDateTime.now(),
                 Dificuldade.MEDIO, Arrays.asList("Aprender a base", "Base arquitetural"), 1l );
 
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        String metaJson = mapper.writeValueAsString(formMeta);
+        String metaJson = objectMapper.writeValueAsString(formMeta);
 
         Meta metaSalva = formMeta.converterParaMetaEntidade(formMeta);
         metaSalva.setId(1L);
@@ -243,8 +262,7 @@ public class MetaControllerTest {
         BDDMockito.given(metaService.salvarMeta((any(Long.class)), (any(Meta.class))))
                 .willReturn(metaSalva);
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(META_URI)
+        MockHttpServletRequestBuilder request = post(META_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(metaJson);
@@ -266,8 +284,7 @@ public class MetaControllerTest {
 
         String metaJson = mapper.writeValueAsString(new MetaFormCadastro());
 
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .post(META_URI)
+        MockHttpServletRequestBuilder request = post(META_URI)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(metaJson);
@@ -470,9 +487,7 @@ public class MetaControllerTest {
         meta.adicionarTarefa(tarefa);
         meta.setId(id);
 
-        ObjectMapper mapper = new ObjectMapper();
-
-        String metaJson = mapper.writeValueAsString(formAtualizacao);
+        String metaJson = objectMapper.writeValueAsString(formAtualizacao);
 
         BDDMockito.given(metaRepository.findById(Mockito.anyLong())).willReturn(Optional.of(meta));
         BDDMockito.given(metaService.atualizarMeta(any(Meta.class), any(MetaFormAtualizacao.class))).willReturn(meta);
@@ -492,5 +507,43 @@ public class MetaControllerTest {
                 .andExpect(jsonPath("status").value("ANDAMENTO"));
     }
 
+    private String devolverToken() throws Exception {
+        UsuarioFormLogin login = new UsuarioFormLogin();
+        login.setEmail("jorvaldo@jorvaldo.com");
+        login.setSenha("123456789112");
+
+        UsuarioForm usuarioForm = new UsuarioForm("Jorvaldo", "jojo", "jorvaldo@jorvaldo.com",
+                "123456789112");
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String senhaCriptografada = encoder.encode(login.getSenha());
+
+        Usuario usuario = usuarioForm.converterParaEntidade();
+        usuario.setId(1L);
+        usuario.setSenha(senhaCriptografada);
+
+        String loginJson = objectMapper.writeValueAsString(login);
+
+        BDDMockito.given(autenticacaoService.loadUserByUsername(anyString())).willReturn(usuario);
+
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders
+                .post("/api/usuarios/logar")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(loginJson);
+
+        ResultActions result = mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(jsonPath("nome").value("Jorvaldo"))
+                .andExpect(jsonPath("tokenDto").isNotEmpty());
+
+        String resultString = result.andReturn().getResponse().getContentAsString();
+
+        JacksonJsonParser jsonParser = new JacksonJsonParser();
+        String tokenDto = jsonParser.parseMap(resultString).get("tokenDto").toString();
+        String[] a = tokenDto.split("=");
+        String[] tokenMesmo = a[1].split(",");
+        return tokenMesmo[0];
+    }
 
 }

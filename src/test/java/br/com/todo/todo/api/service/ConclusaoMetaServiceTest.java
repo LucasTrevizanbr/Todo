@@ -33,6 +33,7 @@ public class ConclusaoMetaServiceTest {
 
         Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(LocalDateTime.now()),
                 Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
+        meta.setPontos(2);
 
         conclusaoMetaService.concluirMeta(meta);
 

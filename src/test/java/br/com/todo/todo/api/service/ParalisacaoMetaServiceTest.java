@@ -43,6 +43,12 @@ public class ParalisacaoMetaServiceTest {
         Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(LocalDateTime.now()),
                 Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
 
+        meta.setPontos(0);
+
+        HistoricoDatas historicoData = meta.getHistoricoDatasMeta();
+        historicoData.setDataInicioParalisacao(LocalDateTime.now());
+        meta.setHistoricoDatasMeta(historicoData);
+
         paralisacaoMetaService.retomar(meta);
 
         Assertions.assertThat(meta.getStatus()).isEqualTo(Status.RETOMADA);

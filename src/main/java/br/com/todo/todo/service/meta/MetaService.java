@@ -138,11 +138,11 @@ public class MetaService {
                 .filter(tarefa -> tarefa.getId() == idTarefa)
                 .findFirst();
 
-        metaPresente.getTarefasDaMeta().remove(tarefaMeta.get());
-
         if(tarefaMeta.isEmpty()){
             throw new TarefaNaoPresenteNaMetaException("Tarefa não presente na meta");
         }
+
+        metaPresente.getTarefasDaMeta().remove(tarefaMeta.get());
 
         tarefaRepository.deleteById(idTarefa);
         return metaPresente;

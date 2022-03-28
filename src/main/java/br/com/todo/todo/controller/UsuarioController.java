@@ -10,6 +10,7 @@ import br.com.todo.todo.service.TokenService;
 import br.com.todo.todo.service.usuario.AutenticacaoService;
 import br.com.todo.todo.service.usuario.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,7 +47,7 @@ public class UsuarioController {
         usuario = usuarioService.cadastrarUsuario(usuario);
 
         UsuarioDtoSimples usuarioDto = new UsuarioDtoSimples(usuario);
-        return ResponseEntity.ok(usuarioDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioDto);
 
     }
 
@@ -67,7 +68,6 @@ public class UsuarioController {
 
             return ResponseEntity.ok(usuarioDto);
         }catch (AuthenticationException ex){
-                ex.printStackTrace();
                 return ResponseEntity.badRequest().build();
         }
 

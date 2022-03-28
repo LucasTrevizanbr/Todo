@@ -221,7 +221,7 @@ public class MetaServiceTest {
         try {
             metaService.deletarTarefa(meta, 2L);
         } catch (TarefaNaoPresenteNaMetaException e) {
-            Assertions.assertThatExceptionOfType(Exception.class);
+            Assertions.assertThatExceptionOfType(TarefaNaoPresenteNaMetaException.class);
             Assertions.assertThat( "Tarefa não presente na meta".equals(e.getMessage()));
             Assertions.assertThat(meta.getTarefasDaMeta()).isEmpty();
         }
