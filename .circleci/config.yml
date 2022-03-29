@@ -12,9 +12,8 @@ jobs:
           command: mvn -B -DskipTests clean package
       - run:
           name: Test
-          command: mvn test
-      - codecov/upload:
-          file: jacoco.xml
+          command: mvnw test
+      - codecov/upload
 
 workflows:
   sample:
