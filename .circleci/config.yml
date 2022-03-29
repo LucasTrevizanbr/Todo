@@ -14,7 +14,7 @@ jobs:
           name: Test
           command: mvn test
       - codecov/upload:
-          file: jacoco.exec
+          file: jacoco.xml
 
 workflows:
   sample:
