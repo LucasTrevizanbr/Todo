@@ -12,7 +12,7 @@ jobs:
           command: mvn -B -DskipTests clean package
       - run:
           name: Test
-          command: mvnw test
+          command: mvn test
       - codecov/upload
 
 workflows:
