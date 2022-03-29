@@ -14,7 +14,8 @@ jobs:
           name: Test
           command: mvn test
       - codecov/upload:
-          file: jacoco.xml
+          file: { { coverage_report_filepath } }
+
 workflows:
   sample:
     jobs:
