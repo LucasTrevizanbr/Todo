@@ -9,8 +9,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class EmailServiceImpl implements EmailService {
+public class EmailServiceImpl {
 
+    /**
     @Autowired
     private JavaMailSender mailSender;
 
@@ -27,5 +28,5 @@ public class EmailServiceImpl implements EmailService {
         mensagemEmail.setTo(emailsDosUsuarios);
 
         mailSender.send(mensagemEmail);
-    }
+    }*/
 }
