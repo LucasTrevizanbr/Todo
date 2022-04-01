@@ -46,7 +46,7 @@ public class ConfiguracaoSeguranca extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/usuarios/cadastrar").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/usuarios/logar").permitAll()
                 .anyRequest().authenticated()
-                .and().httpBasic()
+                .and().cors()
                 .and().csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().addFilterBefore(new AutenticacaoViaTokenFilter(tokenService, usuarioRepository),
