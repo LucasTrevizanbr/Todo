@@ -79,8 +79,6 @@ public class MetaControllerTest {
     @MockBean
     MetaService metaService;
 
-
-
     private ObjectMapper objectMapper;
 
     private String token;
@@ -92,7 +90,6 @@ public class MetaControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        //token  = devolverToken();
     }
 
 
@@ -475,7 +472,6 @@ public class MetaControllerTest {
     @Test
     @DisplayName("Deve atualizar o objetivo da Meta e devolver um Json de DTO detalhado")
     public void atualizarObjetivoMeta() throws Exception {
-
 
         MetaFormAtualizacao formAtualizacao = new MetaFormAtualizacao("Aprender automação");
 
