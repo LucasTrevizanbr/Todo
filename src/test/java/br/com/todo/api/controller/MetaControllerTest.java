@@ -3,7 +3,6 @@ package br.com.todo.api.controller;
 import br.com.todo.aplicacao.dto.form.*;
 import br.com.todo.dominio.repositorios.MetaRepository;
 import br.com.todo.dominio.servicos.meta.MetaService;
-import br.com.todo.todo.dto.form.*;
 import br.com.todo.aplicacao.excecoes.TarefasInacabadasException;
 import br.com.todo.dominio.modelos.Meta;
 import br.com.todo.dominio.modelos.Tarefa;
@@ -110,7 +109,7 @@ public class MetaControllerTest {
         BDDMockito.given(metaRepository.findAllByUsuarioId(anyLong(),any(PageRequest.class))).willReturn(metasPaginadas);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .get(META_URI +"/minhas-metas/" +id)
+                .get(META_URI +"/minhas/" +id)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
@@ -138,7 +137,7 @@ public class MetaControllerTest {
                 .willReturn(meta);
         BDDMockito.given(metaRepository.save(any(Meta.class))).willReturn(meta);
 
-        MockHttpServletRequestBuilder request = post(META_URI +"/criar-tarefa/"+id)
+        MockHttpServletRequestBuilder request = post(META_URI +"/"+id+"/tarefa")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(metaJson);
@@ -170,7 +169,7 @@ public class MetaControllerTest {
         BDDMockito.given(tarefaRepository.save(any(Tarefa.class))).willReturn(tarefa);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(META_URI +"/atualizar-tarefa/metaId="+id+"&tarefaId="+id)
+                .put(META_URI +"/"+id+"/atualizar/tarefa/"+id)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(metaJson);
@@ -198,7 +197,7 @@ public class MetaControllerTest {
         BDDMockito.given(metaService.deletarTarefa(any(Meta.class), anyLong())).willReturn(meta);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .delete(META_URI +"/deletar-tarefa/metaId="+id +"&tarefaId="+id);
+                .delete(META_URI +"/"+id+"/deletar/tarefa/"+id);
 
 
         mockMvc.perform(request)
@@ -225,7 +224,7 @@ public class MetaControllerTest {
         BDDMockito.given(tarefaRepository.save(any(Tarefa.class))).willReturn(tarefa);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
-                .put(META_URI +"/concluir-tarefa/metaId="+id +"&tarefaId="+id)
+                .put(META_URI +"/"+id+"/concluir/tarefa/"+id)
                 .accept(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
