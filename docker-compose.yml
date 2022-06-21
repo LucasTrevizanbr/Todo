@@ -1,0 +1,17 @@
+version: "3"
+services: 
+  todo-api:
+      restart: always
+      build: 
+        context: ./
+        dockerfile: ./Dockerfile
+      image: todo_api_image
+      ports:
+        - '8080:8080'
+      environment:
+        - DB_URL="jdbc:mysql://db/db:3308/todo"
+        - DB_USERNAME="root"
+        - DB_PASSWORD=" "
+        - JWT_SECRET="teste"
+        - MAIL_USERNAME="teste"
+        - MAIL_PASSWORD="teste"
