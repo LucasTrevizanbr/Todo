@@ -18,11 +18,12 @@ Como uma boa prática de desenvolvimento e também para testar meus conhecimento
 # Todo - Como rodar o projeto na máquina local - Docker
 ## você vai precisar:
 - Ter o docker e o docker compose instalados na máquina
-## Clone o projeto ou baixe o zip dele
+
+- Clone o projeto ou baixe o zip
 - Digite o comando `docker-compose up`, container com a aplicação e o banco de dados serão criados, depois de construir e rodar os container o projeto será iniciado na porta 8080
 - Basta acessar `http://localhost:8080/swagger-ui.html#/` para ter acesso a documentação.
 
-# Todo - Como rodar o projeto na máquina local
+# Todo - Como rodar o projeto na máquina local - Arquivo Jar
 Por enquanto não tenho imagens de container para a aplicação, então pra rodar localmente você precisa fazer o package do projeto.
 ## você vai precisar:
 - Ter o algum banco de dados instalado
