@@ -16,6 +16,7 @@ Como uma boa prática de desenvolvimento e também para testar meus conhecimento
 </div>
 
 # Todo - Como rodar o projeto na máquina local - Docker
+Não precisa configurar seu ambiente, basta rodar o projeto de maneira conteinerizada.
 ## você vai precisar:
 - Ter o docker e o docker compose instalados na máquina
 
@@ -24,7 +25,7 @@ Como uma boa prática de desenvolvimento e também para testar meus conhecimento
 - Basta acessar `http://localhost:8080/swagger-ui.html#/` para ter acesso a documentação.
 
 # Todo - Como rodar o projeto na máquina local - Arquivo Jar
-Por enquanto não tenho imagens de container para a aplicação, então pra rodar localmente você precisa fazer o package do projeto.
+Se não quiser usar containers vai precisar fazer o package do projeto.
 ## você vai precisar:
 - Ter o algum banco de dados instalado
 - Ter as variáveis de ambiente apontando para o java 17 ou superior
