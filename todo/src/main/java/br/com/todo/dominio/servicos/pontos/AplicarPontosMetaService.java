@@ -4,7 +4,7 @@ import br.com.todo.dominio.modelos.Meta;
 import br.com.todo.dominio.modelos.Dificuldade;
 import br.com.todo.dominio.modelos.HistoricoDatas;
 import br.com.todo.dominio.modelos.Status;
-import br.com.todo.infraestrutura.utils.DataUtils;
+import br.com.todo.aplicacao.utils.DataUtils;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

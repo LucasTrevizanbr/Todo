@@ -1,4 +1,4 @@
-package br.com.todo.infraestrutura.utils;
+package br.com.todo.aplicacao.utils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
