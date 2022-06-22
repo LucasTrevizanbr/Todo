@@ -21,7 +21,7 @@ Não precisa configurar seu ambiente, basta rodar o projeto de maneira conteiner
 - Ter o docker e o docker compose instalados na máquina
 
 - Clone o projeto ou baixe o zip
-- Digite o comando `docker-compose up`, container com a aplicação e o banco de dados serão criados, depois de construir e rodar os container o projeto será iniciado na porta 8080
+- Abra um terminal no diretório principal(Todo) e digite o comando `docker-compose up` , container com a aplicação e o banco de dados serão criados, depois de construir e rodar os container o projeto será iniciado na porta 8080
 - Basta acessar `http://localhost:8080/swagger-ui.html#/` para ter acesso a documentação.
 
 # Todo - Como rodar o projeto na máquina local - Arquivo Jar
@@ -31,7 +31,7 @@ Se não quiser usar containers vai precisar fazer o package do projeto.
 - Ter as variáveis de ambiente apontando para o java 17 ou superior
 - Ter o maven instalado
 ## Clone o projeto ou baixe o zip dele
-- Abra um terminal no diretório raiz do projeto e digite `mvn clean package`, isso vai gerar um .jar do projeto
+- Abra um terminal no diretório raiz do projeto (Todo/todo) e digite `mvn clean package`, isso vai gerar um .jar do projeto
 - <div align- "center"> <img src="https://user-images.githubusercontent.com/72326473/172445956-fa68215c-31a8-42ad-a787-14a2a4573333.png" width="200px" /></div>
 - Se quiser rodar esse .jar você precisa passar os valores de diversas variáveis de ambiente, são elas : `DB_URL` , `DB_USERNAME`, `DB_PASSWORD`, `JWT_SECRET`,
 `MAIL_USERNAME`, `MAIL_PASSWORD`. Você passa o valor de uma variável de ambiente na linha de comando da seguinte maneira:**"-Dxxxx=yyyy"** x=nome da variável, y=valor da variável
