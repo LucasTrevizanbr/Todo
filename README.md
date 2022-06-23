@@ -1,4 +1,4 @@
-
+[![Build e Testes](https://github.com/LucasTrevizanbr/Todo/actions/workflows/maven.yml/badge.svg?branch=main)](https://github.com/LucasTrevizanbr/Todo/actions/workflows/maven.yml)
 [![codecov](https://codecov.io/gh/LucasTrevizanbr/Todo/branch/main/graph/badge.svg?token=O4JL9DRXAM)](https://codecov.io/gh/LucasTrevizanbr/Todo)
 # Todo - Ideia
 A proposta da API é ser um centralizador de metas de um usuário, onde ele pode definir seus prazos de conclusão e cadastrar tarefas relacionadas a meta para uma dimensão maior do objetivo. As metas então concedem pontos após serem concluídas, baseado no nível de dificuldade, prazo de conclusão e etc.. :
