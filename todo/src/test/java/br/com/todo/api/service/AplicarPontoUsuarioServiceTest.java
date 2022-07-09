@@ -1,12 +1,11 @@
 package br.com.todo.api.service;
 
-import br.com.todo.dominio.repositorios.UsuarioRepository;
-import br.com.todo.dominio.modelos.Meta;
-import br.com.todo.dominio.modelos.Usuario;
-import br.com.todo.dominio.modelos.Dificuldade;
-import br.com.todo.dominio.modelos.HistoricoDatas;
-import br.com.todo.dominio.modelos.Status;
-import br.com.todo.dominio.servicos.pontos.AplicarPontoUsuarioService;
+import br.com.todo.domain.repository.UserRepository;
+import br.com.todo.domain.model.Goal;
+import br.com.todo.domain.model.User;
+import br.com.todo.domain.model.enums.Difficulty;
+import br.com.todo.domain.model.DatesHistory;
+import br.com.todo.domain.model.enums.Status;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,22 +29,22 @@ public class AplicarPontoUsuarioServiceTest {
     private AplicarPontoUsuarioService aplicarPontoUsuarioService;
 
     @MockBean
-    UsuarioRepository usuarioRepository;
+    UserRepository usuarioRepository;
 
     @Test
     @DisplayName("Deve conceder pontos da Meta ao usuario")
     public void aplicarPontosDaMetaConcluidaAoUsuarioTest(){
-        Usuario usuario = new Usuario("Jorberto");
-        usuario.setPontosConclusaoMetas(11);
+        User usuario = new User("Jorberto");
+        usuario.setConclusionPointsGoal(11);
         usuario.setId(1L);
-        Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(LocalDateTime.now()),
-                Status.ANDAMENTO, usuario, Dificuldade.MEDIO);
-        meta.setPontos(22);
+        Goal meta = new Goal("Aprender Kotlin", new DatesHistory(LocalDateTime.now()),
+                Status.ONGOING, usuario, Difficulty.MEDIUM);
+        meta.setPoints(22);
 
         Mockito.when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuario));
         aplicarPontoUsuarioService.aplicarPontosDaMetaConcluida(meta, usuarioRepository);
 
-        Assertions.assertThat(usuario.getPontosConclusaoMetas()).isEqualTo(33);
+        Assertions.assertThat(usuario.getConclusionPointsGoal()).isEqualTo(33);
 
     }
 }

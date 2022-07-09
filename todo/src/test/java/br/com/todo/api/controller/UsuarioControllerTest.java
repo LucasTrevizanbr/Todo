@@ -1,14 +1,11 @@
 package br.com.todo.api.controller;
 
-import br.com.todo.dominio.repositorios.UsuarioRepository;
-import br.com.todo.aplicacao.dto.form.UsuarioForm;
-import br.com.todo.aplicacao.dto.form.UsuarioFormLogin;
-import br.com.todo.dominio.modelos.Usuario;
-import br.com.todo.dominio.servicos.usuario.AutenticacaoService;
+import br.com.todo.domain.repository.UserRepository;
+import br.com.todo.application.controller.user.request.PostUserRequest;
+import br.com.todo.application.controller.user.request.UserLoginRequest;
+import br.com.todo.domain.model.User;
+import br.com.todo.domain.service.user.AuthenticationLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -43,37 +40,38 @@ public class UsuarioControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    UsuarioRepository usuarioRepository;
+    UserRepository usuarioRepository;
 
     @MockBean
-    AutenticacaoService autenticacaoService;
+    AuthenticationLoginService autenticacaoService;
 
     private ObjectMapper objectMapper;
 
-    private UsuarioForm usuarioForm;
+    private PostUserRequest usuarioForm;
 
+    /*
     @BeforeEach
     public void setUp(){
 
-        usuarioForm = new UsuarioForm("Jorvaldo", "jojo", "jorvaldo@jorvaldo.com",
+        usuarioForm = new PostUserRequest("Jorvaldo", "jojo", "jorvaldo@jorvaldo.com",
                 "123456789112");
 
         objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    }
+    }*/
 
     @Test
     @DisplayName("Deve cadastrar usuario com sucesso e devolver")
     public void deveCadastrarUsuario() throws Exception {
 
-        Usuario usuario = usuarioForm.converterParaEntidade();
+        User usuario = usuarioForm.convertToUserModel();
         usuario.setId(1L);
 
         String usuarioFormJson = objectMapper.writeValueAsString(usuarioForm);
 
         BDDMockito.given(usuarioRepository.findByEmail(anyString())).willReturn(Optional.empty());
-        BDDMockito.given(usuarioRepository.save(any(Usuario.class))).willReturn(usuario);
+        BDDMockito.given(usuarioRepository.save(any(User.class))).willReturn(usuario);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(USUARIO_URI +"/cadastrar")
@@ -94,13 +92,13 @@ public class UsuarioControllerTest {
     @DisplayName("Deve devolver exceção de usuario ja cadastrado")
     public void naoDeveCadastrarUsuario() throws Exception {
 
-        Usuario usuario = usuarioForm.converterParaEntidade();
+        User usuario = usuarioForm.convertToUserModel();
         usuario.setId(1L);
 
         String usuarioFormJson = objectMapper.writeValueAsString(usuarioForm);
 
         BDDMockito.given(usuarioRepository.findByEmail(anyString())).willReturn(Optional.of(usuario));
-        BDDMockito.given(usuarioRepository.save(any(Usuario.class))).willReturn(usuario);
+        BDDMockito.given(usuarioRepository.save(any(User.class))).willReturn(usuario);
 
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders
                 .post(USUARIO_URI +"/cadastrar")
@@ -117,16 +115,16 @@ public class UsuarioControllerTest {
     @Test
     @DisplayName("Deve logar o usuario com sucesso e devolver o token")
     public void deveLogar() throws Exception {
-        UsuarioFormLogin login = new UsuarioFormLogin();
+        UserLoginRequest login = new UserLoginRequest();
         login.setEmail("jorvaldo@jorvaldo.com");
         login.setSenha("123456789112");
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String senhaCriptografada = encoder.encode(login.getSenha());
 
-        Usuario usuario = usuarioForm.converterParaEntidade();
+        User usuario = usuarioForm.convertToUserModel();
         usuario.setId(1L);
-        usuario.setSenha(senhaCriptografada);
+        usuario.setPassword(senhaCriptografada);
 
         String loginJson = objectMapper.writeValueAsString(login);
 
@@ -147,16 +145,16 @@ public class UsuarioControllerTest {
     @Test
     @DisplayName("Deve lançar exceção de senha invalida ")
     public void naoDeveLogar() throws Exception {
-        UsuarioFormLogin login = new UsuarioFormLogin();
+        UserLoginRequest login = new UserLoginRequest();
         login.setEmail("jorvaldo@jorvaldo.com");
         login.setSenha("123456789112");
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String senhaCriptografada = encoder.encode("blavlasedw22wds");
 
-        Usuario usuario = usuarioForm.converterParaEntidade();
+        User usuario = usuarioForm.convertToUserModel();
         usuario.setId(1L);
-        usuario.setSenha(senhaCriptografada);
+        usuario.setPassword(senhaCriptografada);
 
         String loginJson = objectMapper.writeValueAsString(login);
 

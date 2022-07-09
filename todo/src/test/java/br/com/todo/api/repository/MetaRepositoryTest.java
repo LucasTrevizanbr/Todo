@@ -1,12 +1,12 @@
 package br.com.todo.api.repository;
 
-import br.com.todo.dominio.repositorios.MetaRepository;
-import br.com.todo.dominio.modelos.Meta;
-import br.com.todo.dominio.modelos.Tarefa;
-import br.com.todo.dominio.modelos.Usuario;
-import br.com.todo.dominio.modelos.Dificuldade;
-import br.com.todo.dominio.modelos.HistoricoDatas;
-import br.com.todo.dominio.modelos.Status;
+import br.com.todo.domain.repository.GoalRepository;
+import br.com.todo.domain.model.Goal;
+import br.com.todo.domain.model.Task;
+import br.com.todo.domain.model.User;
+import br.com.todo.domain.model.enums.Difficulty;
+import br.com.todo.domain.model.DatesHistory;
+import br.com.todo.domain.model.enums.Status;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,22 +33,22 @@ public class MetaRepositoryTest {
     private TestEntityManager testEntityManager;
 
     @Autowired
-    private MetaRepository metaRepository;
+    private GoalRepository metaRepository;
 
-    private Meta meta;
+    private Goal meta;
 
-    private Usuario user;
+    private User user;
 
     @BeforeEach
     public void setUp(){
         LocalDateTime dataFinal = LocalDateTime.of(2022, 4, 3, 12,10,00);
-        user = new Usuario("Jorberto");
+        user = new User("Jorberto");
         user.setEmail("jorgeBlablu@hotmail.com");
 
-        meta = new Meta("Aprender Kotlin", new HistoricoDatas(dataFinal),
-                Status.ANDAMENTO, user, Dificuldade.MEDIO);
-        meta.adicionarTarefa(new Tarefa("Aprender paradigma Funcional"));
-        meta.adicionarTarefa(new Tarefa("Aprender scope functions"));
+        meta = new Goal("Aprender Kotlin", new DatesHistory(dataFinal),
+                Status.ONGOING, user, Difficulty.MEDIUM);
+        meta.addTask(new Task("Aprender paradigma Funcional"));
+        meta.addTask(new Task("Aprender scope functions"));
 
         testEntityManager.persist(user);
         testEntityManager.persist(meta);
@@ -58,18 +58,18 @@ public class MetaRepositoryTest {
     @DisplayName("Deve retornar uma Meta pelo seu ID")
     public void deveRetornarMeta(){
 
-        Optional<Meta> metaBuscada = metaRepository.findById(meta.getId());
+        Optional<Goal> metaBuscada = metaRepository.findById(meta.getId());
         Assertions.assertThat(metaBuscada.isPresent()).isTrue();
     }
 
     @Test
     @DisplayName("Deve atualizar a meta com os novos valores ")
     public void deveSalvarMeta(){
-        meta.setObjetivo("Gerenciar Agência");
+        meta.setObjective("Gerenciar Agência");
 
-        Meta metaAtualizada = metaRepository.save(meta);
+        Goal metaAtualizada = metaRepository.save(meta);
 
-        Assertions.assertThat(metaAtualizada.getObjetivo()).isEqualTo("Gerenciar Agência");
+        Assertions.assertThat(metaAtualizada.getObjective()).isEqualTo("Gerenciar Agência");
     }
     
     @Test
@@ -77,7 +77,7 @@ public class MetaRepositoryTest {
     public void deveDeletarUmaMeta(){
 
         metaRepository.deleteById(meta.getId());
-        Optional<Meta> metaAtualizada = metaRepository.findById(meta.getId());
+        Optional<Goal> metaAtualizada = metaRepository.findById(meta.getId());
 
         Assertions.assertThat(metaAtualizada.isEmpty()).isTrue();
     }
@@ -90,7 +90,7 @@ public class MetaRepositoryTest {
         LocalDateTime inicioDia = dataFinal.toLocalDate().atStartOfDay();
         LocalDateTime fimDoDia = dataFinal.with(LocalTime.of(23,59,59));
 
-        List<Meta> metasPrazoFinal = metaRepository.listarMetasNoDiaFinal(inicioDia,fimDoDia);
+        List<Goal> metasPrazoFinal = metaRepository.findGoalsInDeadLine(inicioDia,fimDoDia);
 
         Assertions.assertThat(metasPrazoFinal).hasSize(1).contains(meta);
     }

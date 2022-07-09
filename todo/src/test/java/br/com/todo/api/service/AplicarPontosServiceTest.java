@@ -1,11 +1,10 @@
 package br.com.todo.api.service;
 
-import br.com.todo.dominio.modelos.Meta;
-import br.com.todo.dominio.modelos.Usuario;
-import br.com.todo.dominio.modelos.Dificuldade;
-import br.com.todo.dominio.modelos.HistoricoDatas;
-import br.com.todo.dominio.modelos.Status;
-import br.com.todo.dominio.servicos.pontos.AplicarPontosMetaService;
+import br.com.todo.domain.model.Goal;
+import br.com.todo.domain.model.User;
+import br.com.todo.domain.model.enums.Difficulty;
+import br.com.todo.domain.model.DatesHistory;
+import br.com.todo.domain.model.enums.Status;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,46 +22,46 @@ import java.time.LocalDateTime;
 public class AplicarPontosServiceTest {
 
     @Autowired
-    AplicarPontosMetaService aplicarPontosService;
+    ApplyScoreService aplicarPontosService;
 
     @Test
     @DisplayName("Deve aplicar penalidade de 0.5 pontos por cada dia que a Meta ficou paralisada, valor negativo")
     public void deveAplicarPenalidadeRetomadaPontoValorNegativo(){
 
-        Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(LocalDateTime.now()),
-                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
+        Goal meta = new Goal("Aprender Kotlin", new DatesHistory(LocalDateTime.now()),
+                Status.ONGOING, new User("Jorberto"), Difficulty.MEDIUM);
 
         LocalDateTime dataInicioParalisacao =
                 LocalDateTime.of(2022, 3, 4, 13, 22, 00);
         LocalDateTime dataRetomada =
                 LocalDateTime.of(2022, 3, 7, 13, 22, 00);
-        meta.getHistoricoDatasMeta().setDataInicioParalisacao(dataInicioParalisacao);
-        meta.getHistoricoDatasMeta().setDataRetornoDaParalisacao(dataRetomada);
-        meta.setPontos(-1);
+        meta.getDateHistory().setStopDate(dataInicioParalisacao);
+        meta.getDateHistory().setRetakenDate(dataRetomada);
+        meta.setPoints(-1);
 
         aplicarPontosService.aplicarPenalidadeAposRetomada(meta);
 
-        Assertions.assertThat(meta.getPontos()).isEqualTo(-3);
+        Assertions.assertThat(meta.getPoints()).isEqualTo(-3);
     }
 
     @Test
     @DisplayName("Deve aplicar penalidade de 0.5 pontos por cada dia que a Meta ficou paralisada, valor positivo")
     public void deveAplicarPenalidadeRetomadaPontoValorPositivo(){
 
-        Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(LocalDateTime.now()),
-                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
+        Goal meta = new Goal("Aprender Kotlin", new DatesHistory(LocalDateTime.now()),
+                Status.ONGOING, new User("Jorberto"), Difficulty.MEDIUM);
 
         LocalDateTime dataInicioParalisacao =
                 LocalDateTime.of(2022, 3, 4, 13, 22, 00);
         LocalDateTime dataRetomada =
                 LocalDateTime.of(2022, 3, 7, 13, 22, 00);
-        meta.getHistoricoDatasMeta().setDataInicioParalisacao(dataInicioParalisacao);
-        meta.getHistoricoDatasMeta().setDataRetornoDaParalisacao(dataRetomada);
-        meta.setPontos(10);
+        meta.getDateHistory().setStopDate(dataInicioParalisacao);
+        meta.getDateHistory().setRetakenDate(dataRetomada);
+        meta.setPoints(10);
 
         aplicarPontosService.aplicarPenalidadeAposRetomada(meta);
 
-        Assertions.assertThat(meta.getPontos()).isEqualTo(8);
+        Assertions.assertThat(meta.getPoints()).isEqualTo(8);
     }
 
     @Test
@@ -74,17 +73,17 @@ public class AplicarPontosServiceTest {
         LocalDateTime dataCriacaoMeta =
                 LocalDateTime.of(2022, 3, 1, 13, 22, 00);
 
-        Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(dataFinalizacaoEstipulada),
-                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.MEDIO);
-        meta.getHistoricoDatasMeta().setDataCriacao(dataCriacaoMeta);
+        Goal meta = new Goal("Aprender Kotlin", new DatesHistory(dataFinalizacaoEstipulada),
+                Status.ONGOING, new User("Jorberto"), Difficulty.MEDIUM);
+        meta.getDateHistory().setCreationDate(dataCriacaoMeta);
 
 
         LocalDateTime dataFinalizacaoReal =
                 LocalDateTime.of(2022, 3, 28, 16, 22, 00);
 
-        meta.getHistoricoDatasMeta().setDataFinalizacaoReal(dataFinalizacaoEstipulada);
-        meta.getHistoricoDatasMeta().setDataFinalizacaoEstipulada(dataFinalizacaoReal);
-        meta.setPontos(-2);
+        meta.getDateHistory().setRealFinalizationDate(dataFinalizacaoEstipulada);
+        meta.getDateHistory().setExpectedFinalizationDate(dataFinalizacaoReal);
+        meta.setPoints(-2);
 
         int pontosBaseTarefaNoPrazo = 27;
         int pontosPorDificuldadeMedia = 4;
@@ -107,18 +106,18 @@ public class AplicarPontosServiceTest {
         LocalDateTime dataCriacaoMeta =
                 LocalDateTime.of(2022, 3, 1, 13, 22, 00);
 
-        Meta meta = new Meta("Aprender Kotlin",
-                new HistoricoDatas(dataFinalizacaoEstipulada),
-                Status.RETOMADA,
-                new Usuario("Jorberto"),
-                Dificuldade.DIFICIL);
-        meta.getHistoricoDatasMeta().setDataCriacao(dataCriacaoMeta);
+        Goal meta = new Goal("Aprender Kotlin",
+                new DatesHistory(dataFinalizacaoEstipulada),
+                Status.RETAKEN,
+                new User("Jorberto"),
+                Difficulty.HARD);
+        meta.getDateHistory().setCreationDate(dataCriacaoMeta);
 
         LocalDateTime dataFinalizacaoReal =
                 LocalDateTime.of(2022, 3, 31, 16, 22, 00);
 
-        meta.getHistoricoDatasMeta().setDataFinalizacaoReal(dataFinalizacaoEstipulada);
-        meta.setPontos(0);
+        meta.getDateHistory().setRealFinalizationDate(dataFinalizacaoEstipulada);
+        meta.setPoints(0);
 
         int pontosBaseTarefaNoPrazo = 27;
         int pontosPorStatusRetomada = 2;
@@ -142,16 +141,16 @@ public class AplicarPontosServiceTest {
         LocalDateTime dataCriacaoMeta =
                 LocalDateTime.of(2022, 3, 1, 13, 22, 00);
 
-        Meta meta = new Meta("Aprender Kotlin", new HistoricoDatas(dataFinalizacaoEstipulada),
-                Status.ANDAMENTO, new Usuario("Jorberto"), Dificuldade.FACIL);
-        meta.getHistoricoDatasMeta().setDataCriacao(dataCriacaoMeta);
+        Goal meta = new Goal("Aprender Kotlin", new DatesHistory(dataFinalizacaoEstipulada),
+                Status.ONGOING, new User("Jorberto"), Difficulty.EASY);
+        meta.getDateHistory().setCreationDate(dataCriacaoMeta);
 
 
         LocalDateTime dataFinalizacaoReal =
                 LocalDateTime.of(2022, 3, 31, 16, 22, 00);
 
-        meta.getHistoricoDatasMeta().setDataFinalizacaoReal(dataFinalizacaoReal);
-        meta.setPontos(0);
+        meta.getDateHistory().setRealFinalizationDate(dataFinalizacaoReal);
+        meta.setPoints(0);
 
         int pontosBaseTarefaNoPrazo = 25;
         int pontosPorStatusRetomada = 0;
