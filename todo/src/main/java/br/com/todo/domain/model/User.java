@@ -36,12 +36,7 @@ public class User implements UserDetails {
     @JsonIgnoreProperties("user")
     private List<Goal> goals;
 
-    public UsernamePasswordAuthenticationToken convertToAuthentication() {
-        return new UsernamePasswordAuthenticationToken(email, password);
-    }
-
-    public User(String name) {
-        this.name = name;
+    public User() {
     }
 
     public Long getId() {

@@ -1,5 +1,7 @@
 package br.com.todo.application.controller.user.request;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+
 import javax.validation.constraints.NotNull;
 
 public class UserLoginRequest {
@@ -8,7 +10,11 @@ public class UserLoginRequest {
     private String email;
 
     @NotNull
-    private String senha;
+    private String password;
+
+    public UsernamePasswordAuthenticationToken convertToAuthentication() {
+        return new UsernamePasswordAuthenticationToken(email, password);
+    }
 
 
     public String getEmail() {
@@ -19,12 +25,12 @@ public class UserLoginRequest {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 

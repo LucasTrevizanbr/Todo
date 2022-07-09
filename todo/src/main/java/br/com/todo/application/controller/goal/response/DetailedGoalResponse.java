@@ -5,8 +5,8 @@ import br.com.todo.domain.model.Task;
 import br.com.todo.domain.model.enums.Difficulty;
 import br.com.todo.domain.model.DatesHistory;
 import br.com.todo.domain.model.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DetailedGoalResponse {
@@ -23,7 +23,8 @@ public class DetailedGoalResponse {
 
     private Difficulty difficulty;
 
-    private List<Task> goalTasks = new ArrayList<>();
+    @JsonIgnoreProperties("goal")
+    private List<Task> tasks;
 
     private String ownerName;
 
@@ -34,7 +35,7 @@ public class DetailedGoalResponse {
         this.points = goal.getPoints();
         this.status = goal.getStatus();
         this.difficulty = goal.getDifficulty();
-        this.goalTasks = goal.getTasks();
+        this.tasks = goal.getTasks();
         this.ownerName = goal.getUser().getName();
     }
 
@@ -69,7 +70,7 @@ public class DetailedGoalResponse {
         return ownerName;
     }
 
-    public List<Task> getGoalTasks() {
-        return goalTasks;
+    public List<Task> getTasks() {
+        return tasks;
     }
 }

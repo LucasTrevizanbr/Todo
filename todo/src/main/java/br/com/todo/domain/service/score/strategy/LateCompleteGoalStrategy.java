@@ -3,6 +3,7 @@ package br.com.todo.domain.service.score.strategy;
 import br.com.todo.domain.model.DatesHistory;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import static br.com.todo.infraestructure.util.ScoreCalculationUtils.getPointsPerDay;
 
@@ -18,8 +19,8 @@ public class LateCompleteGoalStrategy implements ScoreDateStrategy {
 
     private int expectedPoints(DatesHistory datesHistory) {
         int expectedPoints = 0;
-        LocalDate create = datesHistory.getCreationDate().toLocalDate();
-        LocalDate expectedFinish = datesHistory.getExpectedFinalizationDate().toLocalDate();
+        LocalDateTime create = datesHistory.getCreationDate();
+        LocalDateTime expectedFinish = datesHistory.getExpectedFinalizationDate();
         expectedPoints = getPointsPerDay(create, expectedFinish, ScoreValues.PER_DAY.getValue());
 
         return expectedPoints;
@@ -27,8 +28,8 @@ public class LateCompleteGoalStrategy implements ScoreDateStrategy {
 
     private int penaltyPoints(DatesHistory datesHistory) {
         int discountPoints = 0;
-        LocalDate create = datesHistory.getCreationDate().toLocalDate();
-        LocalDate realFinish = datesHistory.getRealFinalizationDate().toLocalDate();
+        LocalDateTime create = datesHistory.getCreationDate();
+        LocalDateTime realFinish = datesHistory.getRealFinalizationDate();
         discountPoints = getPointsPerDay(create, realFinish, ScoreValues.PER_DAY_PENALTY.getValue());
         return discountPoints;
     }

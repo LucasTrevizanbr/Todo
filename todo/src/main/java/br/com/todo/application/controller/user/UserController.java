@@ -8,8 +8,7 @@ import br.com.todo.domain.model.User;
 import br.com.todo.domain.repository.UserRepository;
 import br.com.todo.domain.service.user.UserCrudService;
 import br.com.todo.infraestructure.security.token.TokenService;
-import br.com.todo.domain.service.user.AuthenticationLoginService;
-import org.springframework.beans.factory.annotation.Autowired;
+import br.com.todo.infraestructure.security.AuthenticationLoginService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,20 +24,25 @@ import javax.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserRepository usuarioRepository;
+    private final UserRepository usuarioRepository;
 
-    @Autowired
-    private AuthenticationManager authManager;
+    private final AuthenticationManager authManager;
 
-    @Autowired
-    private TokenService tokenService;
+    private final TokenService tokenService;
 
-    @Autowired
-    private UserCrudService userCrudService;
+    private final UserCrudService userCrudService;
 
-    @Autowired
-    private AuthenticationLoginService authLoginService;
+    private final AuthenticationLoginService authLoginService;
+
+    public UserController(UserRepository usuarioRepository, AuthenticationManager authManager,
+                          TokenService tokenService, UserCrudService userCrudService,
+                          AuthenticationLoginService authLoginService) {
+        this.usuarioRepository = usuarioRepository;
+        this.authManager = authManager;
+        this.tokenService = tokenService;
+        this.userCrudService = userCrudService;
+        this.authLoginService = authLoginService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<UserLoginResponse> createUser(@RequestBody @Valid PostUserRequest formUsuario){
@@ -54,10 +58,10 @@ public class UserController {
     public ResponseEntity<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest loginRequest){
 
         User user = (User) authLoginService.loadUserByUsername(loginRequest.getEmail());
-        user = authLoginService.validatePassword(user, loginRequest.getSenha());
+        user = authLoginService.validatePassword(user, loginRequest.getPassword());
 
         try{
-            UsernamePasswordAuthenticationToken userLogged = user.convertToAuthentication();
+            UsernamePasswordAuthenticationToken userLogged = loginRequest.convertToAuthentication();
             Authentication userAuthenticated = authManager.authenticate(userLogged);
 
             String token = tokenService.generateTokenToUserAuthenticated(userAuthenticated);

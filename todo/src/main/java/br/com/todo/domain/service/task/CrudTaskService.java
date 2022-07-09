@@ -1,6 +1,8 @@
 package br.com.todo.domain.service.task;
 
 import br.com.todo.application.controller.goal.request.PostTaskRequest;
+import br.com.todo.application.exception.errors.ApiError;
+import br.com.todo.application.exception.errors.NotFoundException;
 import br.com.todo.domain.model.Goal;
 import br.com.todo.domain.model.Task;
 import br.com.todo.domain.repository.TaskRepository;
@@ -26,7 +28,7 @@ public class CrudTaskService {
                 .findFirst();
 
         if(task.isEmpty()){
-            throw new RuntimeException("Task not found");
+            throw new NotFoundException(ApiError.TG001.getMessageError(),ApiError.TG001.name());
         }
 
         return task.get();

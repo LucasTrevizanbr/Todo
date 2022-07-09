@@ -17,7 +17,7 @@ public class Task {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("goalTasks")
+    @JsonIgnoreProperties("tasks")
     private Goal goal;
 
     public Task(String description) {

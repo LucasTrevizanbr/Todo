@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @SpringBootTest
 public class AplicarPontosServiceTest {
 
+    /*
     @Autowired
     ApplyScoreService aplicarPontosService;
 
@@ -164,4 +165,6 @@ public class AplicarPontosServiceTest {
 
         Assertions.assertThat(pontosAplicaveis).isEqualTo(pontosQueDeveraoSerConcedidos);
     }
+
+     */
 }

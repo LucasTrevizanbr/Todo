@@ -1,5 +1,7 @@
 package br.com.todo.domain.service.user;
 
+import br.com.todo.application.exception.errors.ApiError;
+import br.com.todo.application.exception.errors.NotFoundException;
 import br.com.todo.domain.model.User;
 import br.com.todo.domain.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,7 +36,7 @@ public class UserCrudService {
     public User findById(Long idUser){
         Optional<User> user = userRepository.findById(idUser);
         if(user.isEmpty()){
-            throw new RuntimeException("User not found");
+            throw new NotFoundException(ApiError.TG001.getMessageError(), ApiError.TG001.name());
         }
         return user.get();
     }

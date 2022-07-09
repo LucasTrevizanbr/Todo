@@ -1,4 +1,4 @@
-package br.com.todo.domain.service.user;
+package br.com.todo.infraestructure.security;
 
 import br.com.todo.domain.repository.UserRepository;
 import br.com.todo.domain.model.User;

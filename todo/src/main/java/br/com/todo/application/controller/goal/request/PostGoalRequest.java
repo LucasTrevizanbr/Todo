@@ -25,10 +25,10 @@ public class PostGoalRequest {
     private List<String> descriptionTasks;
 
     public PostGoalRequest(String objective, LocalDateTime expectedFinalizationDate,
-                           Difficulty dificuldade, List<String> descTasks) {
+                           Difficulty difficulty, List<String> descTasks) {
         this.objective = objective;
         this.expectedFinalizationDate = expectedFinalizationDate;
-        this.difficulty = dificuldade;
+        this.difficulty = difficulty;
         this.descriptionTasks = descTasks;
     }
 
@@ -49,5 +49,21 @@ public class PostGoalRequest {
         }
 
         return goal;
+    }
+
+    public String getObjective() {
+        return objective;
+    }
+
+    public LocalDateTime getExpectedFinalizationDate() {
+        return expectedFinalizationDate;
+    }
+
+    public Difficulty getDifficulty() {
+        return difficulty;
+    }
+
+    public List<String> getDescriptionTasks() {
+        return descriptionTasks;
     }
 }

@@ -2,6 +2,8 @@ package br.com.todo.domain.service.goal;
 
 import br.com.todo.application.controller.goal.request.GoalUpdateRequest;
 import br.com.todo.application.controller.goal.request.PostTaskRequest;
+import br.com.todo.application.exception.errors.ApiError;
+import br.com.todo.application.exception.errors.NotFoundException;
 import br.com.todo.domain.model.*;
 import br.com.todo.domain.model.enums.Status;
 import br.com.todo.domain.repository.GoalRepository;
@@ -12,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -33,7 +34,7 @@ public class GoalCrudService {
         Optional<Goal> goal = goalRepository.findById(goalId);
 
         if(goal.isEmpty()){
-            throw new RuntimeException("Goal not found");
+            throw new NotFoundException(ApiError.TG001.getMessageError(), ApiError.TG001.name());
         }
 
         return goal.get();
@@ -60,8 +61,8 @@ public class GoalCrudService {
     public Goal resumeGoal(Goal goal) {
         goal.getDateHistory().setRetakenDate(LocalDateTime.now());
 
-        LocalDate stoppedDate = goal.getDateHistory().getStopDate().toLocalDate();
-        LocalDate retakenDate =  goal.getDateHistory().getRetakenDate().toLocalDate();
+        LocalDateTime stoppedDate = goal.getDateHistory().getStopDate();
+        LocalDateTime retakenDate =  goal.getDateHistory().getRetakenDate();
 
         int pointsAfterPenalty =
                 goal.getPoints() - getPointsPerDay(stoppedDate, retakenDate, ScoreValues.PER_DAY_PENALTY.getValue());
@@ -73,9 +74,9 @@ public class GoalCrudService {
     }
 
     @Transactional
-    public Goal updateGoal(Goal meta, GoalUpdateRequest form) {
-        meta.setObjective(form.getObjetivo());
-        return goalRepository.save(meta);
+    public Goal updateGoal(Goal goal, GoalUpdateRequest form) {
+        goal.setObjective(form.getObjective());
+        return goalRepository.save(goal);
     }
 
     public void deleteGoalById(Long id) {

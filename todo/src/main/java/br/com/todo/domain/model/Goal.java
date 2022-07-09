@@ -2,6 +2,7 @@ package br.com.todo.domain.model;
 
 import br.com.todo.domain.model.enums.Difficulty;
 import br.com.todo.domain.model.enums.Status;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class Goal {
     private Difficulty difficulty;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "goal")
+    @JsonIgnoreProperties("goal")
     private List<Task> tasks = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

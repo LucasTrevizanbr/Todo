@@ -6,20 +6,10 @@ import javax.validation.constraints.Size;
 public class GoalUpdateRequest {
 
     @NotNull @Size(min = 10, max = 200)
-    private String objetivo;
+    private String objective;
 
-    public GoalUpdateRequest(String objetivo) {
-        this.objetivo = objetivo;
+    public String getObjective() {
+        return objective;
     }
 
-    public GoalUpdateRequest() {
-    }
-
-    public String getObjetivo() {
-        return objetivo;
-    }
-
-    public void setObjetivo(String objetivo) {
-        this.objetivo = objetivo;
-    }
 }

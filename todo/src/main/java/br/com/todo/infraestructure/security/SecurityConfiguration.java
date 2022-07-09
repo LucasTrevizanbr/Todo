@@ -1,7 +1,6 @@
 package br.com.todo.infraestructure.security;
 
 import br.com.todo.domain.repository.UserRepository;
-import br.com.todo.domain.service.user.AuthenticationLoginService;
 import br.com.todo.infraestructure.security.token.AuthenticationTokenFilter;
 import br.com.todo.infraestructure.security.token.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;

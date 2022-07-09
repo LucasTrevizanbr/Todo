@@ -8,7 +8,7 @@ import br.com.todo.application.controller.goal.request.PostTaskRequest;
 import br.com.todo.domain.model.Goal;
 import br.com.todo.domain.model.User;
 import br.com.todo.domain.service.goal.GoalCrudService;
-import br.com.todo.domain.service.goal.FinishingGoalService;
+import br.com.todo.domain.service.goal.FinishGoalService;
 import br.com.todo.domain.service.user.UserCrudService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,9 +29,9 @@ public class GoalController {
 
     private final UserCrudService userService;
     private final GoalCrudService goalService;
-    private final FinishingGoalService finishingGoalService;
+    private final FinishGoalService finishingGoalService;
 
-    public GoalController(UserCrudService userService, GoalCrudService goalService, FinishingGoalService finishingGoalService) {
+    public GoalController(UserCrudService userService, GoalCrudService goalService, FinishGoalService finishingGoalService) {
         this.userService = userService;
         this.goalService = goalService;
         this.finishingGoalService = finishingGoalService;
@@ -48,22 +48,22 @@ public class GoalController {
         return ResponseEntity.ok(metasDto);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DetailedGoalResponse> findGoal(@PathVariable Long id) {
-        Goal goal = goalService.findById(id);
+    @GetMapping("/{goalId}")
+    public ResponseEntity<DetailedGoalResponse> findGoal(@PathVariable Long goalId) {
+        Goal goal = goalService.findById(goalId);
         return ResponseEntity.ok(new DetailedGoalResponse(goal));
     }
 
     @PostMapping("/{idUser}")
-    public ResponseEntity<SimplifiedGoalResponse> createGoal(@PathVariable Long idUser, @RequestBody @Valid PostGoalRequest metaForm,
+    public ResponseEntity<DetailedGoalResponse> createGoal(@PathVariable Long idUser, @RequestBody @Valid PostGoalRequest metaForm,
                                                              @Autowired UriComponentsBuilder uriBuilder) {
 
         User user = userService.findById(idUser);
         Goal goal = goalService.saveGoal(user, metaForm.convertToGoalModel());
-        SimplifiedGoalResponse metaDtoSimples = new SimplifiedGoalResponse(goal);
+        DetailedGoalResponse goalResponse = new DetailedGoalResponse(goal);
 
-        URI uri = uriBuilder.path("/api/goals/{id}").buildAndExpand(metaDtoSimples.getId()).toUri();
-        return ResponseEntity.created(uri).body(metaDtoSimples);
+        URI uri = uriBuilder.path("/api/goals/{id}").buildAndExpand(goalResponse.getId()).toUri();
+        return ResponseEntity.created(uri).body(goalResponse);
     }
 
     @PutMapping("/{goalId}")

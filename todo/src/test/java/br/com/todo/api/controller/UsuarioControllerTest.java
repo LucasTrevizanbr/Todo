@@ -4,7 +4,7 @@ import br.com.todo.domain.repository.UserRepository;
 import br.com.todo.application.controller.user.request.PostUserRequest;
 import br.com.todo.application.controller.user.request.UserLoginRequest;
 import br.com.todo.domain.model.User;
-import br.com.todo.domain.service.user.AuthenticationLoginService;
+import br.com.todo.infraestructure.security.AuthenticationLoginService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -117,10 +117,10 @@ public class UsuarioControllerTest {
     public void deveLogar() throws Exception {
         UserLoginRequest login = new UserLoginRequest();
         login.setEmail("jorvaldo@jorvaldo.com");
-        login.setSenha("123456789112");
+        login.setPassword("123456789112");
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String senhaCriptografada = encoder.encode(login.getSenha());
+        String senhaCriptografada = encoder.encode(login.getPassword());
 
         User usuario = usuarioForm.convertToUserModel();
         usuario.setId(1L);
@@ -147,7 +147,7 @@ public class UsuarioControllerTest {
     public void naoDeveLogar() throws Exception {
         UserLoginRequest login = new UserLoginRequest();
         login.setEmail("jorvaldo@jorvaldo.com");
-        login.setSenha("123456789112");
+        login.setPassword("123456789112");
 
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String senhaCriptografada = encoder.encode("blavlasedw22wds");

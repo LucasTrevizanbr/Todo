@@ -21,6 +21,7 @@ import java.time.LocalDateTime;
 @SpringBootTest
 public class ParalisacaoMetaServiceTest {
 
+    /*
     @Autowired
     ParalisacaoMetaService paralisacaoMetaService;
 
@@ -53,4 +54,6 @@ public class ParalisacaoMetaServiceTest {
         Assertions.assertThat(meta.getStatus()).isEqualTo(Status.RETAKEN);
         Assertions.assertThat(meta.getDateHistory().getRetakenDate()).isNotNull();
     }
+
+     */
 }

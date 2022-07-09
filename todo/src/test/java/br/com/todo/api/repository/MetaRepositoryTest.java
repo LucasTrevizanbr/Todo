@@ -39,6 +39,7 @@ public class MetaRepositoryTest {
 
     private User user;
 
+    /*
     @BeforeEach
     public void setUp(){
         LocalDateTime dataFinal = LocalDateTime.of(2022, 4, 3, 12,10,00);
@@ -94,4 +95,6 @@ public class MetaRepositoryTest {
 
         Assertions.assertThat(metasPrazoFinal).hasSize(1).contains(meta);
     }
+
+     */
 }
