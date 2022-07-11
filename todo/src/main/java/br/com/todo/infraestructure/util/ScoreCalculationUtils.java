@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public class ScoreCalculationUtils {
 
     public static int getPointsPerDay(LocalDateTime from, LocalDateTime until, double multiple) {
-        int points = 0;
+        double points = 0;
 
         long daysUntilComplete = Duration.between(from, until).toDays();
 
@@ -14,6 +14,6 @@ public class ScoreCalculationUtils {
             points += multiple;
         }
 
-        return points;
+        return (int) Math.round(points);
     }
 }

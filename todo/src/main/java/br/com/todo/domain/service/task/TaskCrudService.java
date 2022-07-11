@@ -12,20 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 @Service
-public class CrudTaskService {
+public class TaskCrudService {
 
     private final TaskRepository taskRepository;
 
-    public CrudTaskService(TaskRepository taskRepository) {
+    public TaskCrudService(TaskRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    public Task findById(Goal goal, Long taskId){
+    public Task findById(Long taskId){
 
-        Optional<Task> task = goal.getTasks()
-                .stream()
-                .filter(tarefa -> tarefa.getId() == taskId)
-                .findFirst();
+        Optional<Task> task = taskRepository.findById(taskId);
 
         if(task.isEmpty()){
             throw new NotFoundException(ApiError.TG001.getMessageError(),ApiError.TG001.name());
@@ -37,7 +34,7 @@ public class CrudTaskService {
     @Transactional
     public Goal completeTask(Goal goal, Long taskId) {
 
-        Task task = findById(goal, taskId);
+        Task task = this.findById(taskId);
 
         task.setCompleted(!task.isCompleted());
 
@@ -49,7 +46,7 @@ public class CrudTaskService {
     @Transactional
     public Goal updateTask(Goal goal, Long taskId, PostTaskRequest form){
 
-        Task task = findById(goal, taskId);
+        Task task = this.findById(taskId);
 
         task.setDescription(form.getDescription());
 
@@ -60,7 +57,7 @@ public class CrudTaskService {
 
     public Goal deleteTask(Goal goal, Long taskId){
 
-        Task task = findById(goal, taskId);
+        Task task = this.findById(taskId);
 
         goal.getTasks().remove(task);
 

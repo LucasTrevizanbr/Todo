@@ -13,7 +13,7 @@ public class CompleteGoalOnTimeStrategy implements ScoreDateStrategy {
         int points = 0;
         LocalDateTime create = datesHistory.getCreationDate();
         LocalDateTime complete = datesHistory.getRealFinalizationDate();
-        points = getPointsPerDay(create, complete, ScoreValues.PER_DAY.getValue());
+        points = getPointsPerDay(create, complete, ScoreValues.POINTS_PER_DAY.getValue());
         return points;
     }
 }

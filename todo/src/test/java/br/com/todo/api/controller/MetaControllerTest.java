@@ -33,6 +33,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @WithMockUser(username="admin",roles={"USER","ADMIN"})
 public class MetaControllerTest {
 
+    /*
     static String META_URI = "/api/metas";
 
     @Autowired
@@ -252,6 +253,7 @@ public class MetaControllerTest {
 
     }*/
 
+    /*
     @Test
     @DisplayName("Deverá lançar erro de validação no formulário não adequado de Meta ")
     public void criarRecursoMetaComErro() throws Exception {
@@ -268,6 +270,7 @@ public class MetaControllerTest {
         mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
+    */
 
     /*
     @Test

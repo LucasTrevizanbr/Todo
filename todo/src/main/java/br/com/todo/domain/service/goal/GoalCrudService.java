@@ -8,7 +8,7 @@ import br.com.todo.domain.model.*;
 import br.com.todo.domain.model.enums.Status;
 import br.com.todo.domain.repository.GoalRepository;
 import br.com.todo.domain.service.score.strategy.ScoreValues;
-import br.com.todo.domain.service.task.CrudTaskService;
+import br.com.todo.domain.service.task.TaskCrudService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,9 @@ import static br.com.todo.infraestructure.util.ScoreCalculationUtils.getPointsPe
 public class GoalCrudService {
 
     private final GoalRepository goalRepository;
-    private final CrudTaskService taskService;
+    private final TaskCrudService taskService;
 
-    public GoalCrudService(GoalRepository goalRepository, CrudTaskService taskService) {
+    public GoalCrudService(GoalRepository goalRepository, TaskCrudService taskService) {
         this.goalRepository = goalRepository;
         this.taskService = taskService;
     }
@@ -65,7 +65,7 @@ public class GoalCrudService {
         LocalDateTime retakenDate =  goal.getDateHistory().getRetakenDate();
 
         int pointsAfterPenalty =
-                goal.getPoints() - getPointsPerDay(stoppedDate, retakenDate, ScoreValues.PER_DAY_PENALTY.getValue());
+                goal.getPoints() - getPointsPerDay(stoppedDate, retakenDate, ScoreValues.POINTS_PER_DAY_PENALTY.getValue());
 
         goal.setPoints(pointsAfterPenalty);
         goal.setStatus(Status.RETAKEN);

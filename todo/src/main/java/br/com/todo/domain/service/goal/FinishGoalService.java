@@ -9,11 +9,14 @@ import br.com.todo.domain.model.User;
 import br.com.todo.domain.model.enums.Status;
 import br.com.todo.domain.repository.GoalRepository;
 import br.com.todo.domain.service.score.strategy.CompleteGoalOnTimeStrategy;
+import br.com.todo.domain.service.score.strategy.EarlyCompleteGoalStrategy;
 import br.com.todo.domain.service.score.strategy.LateCompleteGoalStrategy;
 import br.com.todo.domain.service.score.strategy.ScoreDateStrategy;
 import br.com.todo.domain.service.user.UserCrudService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,6 +28,9 @@ public class FinishGoalService {
     private final UserCrudService userCrudService;
 
     private ScoreDateStrategy scoreDateStrategy;
+
+    @Autowired
+    private Clock clock;
 
     public FinishGoalService(GoalRepository goalRepository, UserCrudService userCrudService) {
         this.goalRepository = goalRepository;
@@ -69,19 +75,21 @@ public class FinishGoalService {
 
     private Goal setDateStrategyScoreForThisGoal(Goal goal) {
 
-        LocalDateTime dateTimeNow = LocalDateTime.now();
+        LocalDateTime timeNow = LocalDateTime.now(clock);
 
         LocalDate expectedFinish = goal.getDateHistory().getExpectedFinalizationDate().toLocalDate();
-        LocalDate realFinish = dateTimeNow.toLocalDate();
+        LocalDate realFinish = timeNow.toLocalDate();
 
         if(expectedFinish.isEqual(realFinish)) {
             this.scoreDateStrategy = new CompleteGoalOnTimeStrategy();
+        }else if(expectedFinish.isAfter(realFinish)) {
+            this.scoreDateStrategy = new EarlyCompleteGoalStrategy();
         }else{
             this.scoreDateStrategy = new LateCompleteGoalStrategy();
         }
 
         Goal goalWithFinalizationDateSet = goal;
-        goalWithFinalizationDateSet.getDateHistory().setRealFinalizationDate(dateTimeNow);
+        goalWithFinalizationDateSet.getDateHistory().setRealFinalizationDate(timeNow);
 
         return goalWithFinalizationDateSet;
     }
