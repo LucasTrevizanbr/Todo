@@ -2,7 +2,9 @@ package br.com.todo.domain.service.goal;
 
 import br.com.todo.application.exception.errors.ApiError;
 import br.com.todo.application.exception.errors.NotFoundException;
+import br.com.todo.domain.model.DatesHistory;
 import br.com.todo.domain.model.Goal;
+import br.com.todo.domain.model.enums.Status;
 import br.com.todo.domain.repository.GoalRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -54,6 +56,22 @@ class GoalCrudServiceTest {
         assertThrows(NotFoundException.class, () -> goalCrudService.findById(anyLong()),
                 ApiError.TG001.getMessageError());
         verify(goalRepository, Mockito.times(1)).findById(anyLong());
+    }
+
+    @Test
+    @DisplayName("Should change the goal status to STOPPED and record a stop date")
+    public void shouldStopGoal(){
+        Goal goal = new Goal();
+        goal.setStatus(Status.ONGOING);
+        goal.setDateHistory(new DatesHistory());
+
+        when(goalRepository.save(goal)).thenReturn(goal);
+
+        Goal stoppedGoal = goalCrudService.stopGoal(goal);
+
+        assertThat(stoppedGoal.getStatus()).isEqualTo(Status.STOPPED);
+        assertThat(stoppedGoal.getDateHistory().getStopDate()).isNotNull();
+        verify(goalRepository, Mockito.times(1)).save(goal);
     }
 
 

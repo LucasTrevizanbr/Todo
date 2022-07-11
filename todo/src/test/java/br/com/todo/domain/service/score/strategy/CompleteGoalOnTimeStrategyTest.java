@@ -11,7 +11,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,9 +31,17 @@ class CompleteGoalOnTimeStrategyTest {
         LocalDate goalCreationDate = LocalDate.of(2022,1,13);
         LocalDate goalDeadLineDate = LocalDate.of(2022,1,23);
 
-        LocalDateTime expectedFinalizationDate = LocalDateTime.of(goalDeadLineDate, LocalTime.now());
-        LocalDateTime realFinalizationDate = LocalDateTime.of(goalDeadLineDate, LocalTime.now());
-        LocalDateTime creationDate = LocalDateTime.of(goalCreationDate, LocalTime.now());
+        LocalDateTime expectedFinalizationDate = goalDeadLineDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        LocalDateTime realFinalizationDate = goalDeadLineDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        LocalDateTime creationDate = goalCreationDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toLocalDateTime();
 
         pointsMultiplier = ScoreValues.POINTS_PER_DAY.getValue();
         datesHistory = new DatesHistory();

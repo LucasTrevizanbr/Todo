@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,9 +34,18 @@ class LateCompleteGoalStrategyTest {
         LocalDate goalDeadLineDate = LocalDate.of(2022,1,23);
         LocalDate realCompleteDate = LocalDate.of(2022,1,26);
 
-        LocalDateTime expectedFinalizationDate = LocalDateTime.of(goalDeadLineDate, LocalTime.now());
-        LocalDateTime realFinalizationDate = LocalDateTime.of(realCompleteDate, LocalTime.now());
-        LocalDateTime creationDate = LocalDateTime.of(goalCreationDate, LocalTime.now());
+        LocalDateTime expectedFinalizationDate = goalDeadLineDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        LocalDateTime realFinalizationDate = realCompleteDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toLocalDateTime();
+
+        LocalDateTime creationDate = goalCreationDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toLocalDateTime();
+
 
         pointsMultiplier = ScoreValues.POINTS_PER_DAY.getValue();
         pointsMultiplierWithPenalty = ScoreValues.POINTS_PER_DAY_PENALTY.getValue();

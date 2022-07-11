@@ -9,11 +9,13 @@ import br.com.todo.domain.model.enums.Status;
 import br.com.todo.domain.repository.GoalRepository;
 import br.com.todo.domain.service.score.strategy.ScoreValues;
 import br.com.todo.domain.service.task.TaskCrudService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -24,6 +26,9 @@ public class GoalCrudService {
 
     private final GoalRepository goalRepository;
     private final TaskCrudService taskService;
+
+    @Autowired
+    private Clock clock;
 
     public GoalCrudService(GoalRepository goalRepository, TaskCrudService taskService) {
         this.goalRepository = goalRepository;
@@ -59,7 +64,7 @@ public class GoalCrudService {
 
     @Transactional
     public Goal resumeGoal(Goal goal) {
-        goal.getDateHistory().setRetakenDate(LocalDateTime.now());
+        goal.getDateHistory().setRetakenDate(LocalDateTime.now(clock));
 
         LocalDateTime stoppedDate = goal.getDateHistory().getStopDate();
         LocalDateTime retakenDate =  goal.getDateHistory().getRetakenDate();
