@@ -26,6 +26,13 @@ public enum ApiError {
         public String getMessageError() {
             return "This goal has unfinished tasks";
         }
+    },
+
+    TG201{
+        @Override
+        public String getMessageError() {
+            return "Invalid password";
+        }
     };
 
     public abstract String getMessageError();

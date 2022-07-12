@@ -74,7 +74,7 @@ class FinishGoalServiceTest {
     @DisplayName("Should complete a goal on time with ONGOING status")
     public void completeGoalOnTimeNotLateWithSuccess(){
 
-        Goal goal = buildAGoalOnTimeWorth19Points();
+        Goal goal = buildAGoalOnTimeWorth17Points();
 
         when(clock.instant()).thenReturn(fixedClockFinalizationDateGoalOnTime.instant());
         when(clock.getZone()).thenReturn(fixedClockFinalizationDateGoalOnTime.getZone());
@@ -85,8 +85,8 @@ class FinishGoalServiceTest {
         Goal completedGoal = finishGoalService.completeGoal(goal);
 
         assertThat(completedGoal.getStatus()).isEqualTo(Status.FINISHED);
-        assertThat(completedGoal.getPoints()).isEqualTo(19);
-        assertThat(completedGoal.getUser().getConclusionPointsGoal()).isEqualTo(19);
+        assertThat(completedGoal.getPoints()).isEqualTo(17);
+        assertThat(completedGoal.getUser().getConclusionPointsGoal()).isEqualTo(17);
         verify(goalRepository, times(1)).save(goal);
         verify(userCrudService, times(1)).save(goal.getUser());
 
@@ -115,7 +115,7 @@ class FinishGoalServiceTest {
     @Test
     @DisplayName("Should complete a goal 3 days early.")
     public void completeGoalEarlyWithSuccess(){
-        Goal goal = buildAGoal3DaysEarlyWorth24Points();
+        Goal goal = buildAGoal3DaysEarlyWorth20Points();
 
         when(clock.instant()).thenReturn(fixedClockFinalizationDateGoal3DaysEarly.instant());
         when(clock.getZone()).thenReturn(fixedClockFinalizationDateGoal3DaysEarly.getZone());
@@ -126,8 +126,8 @@ class FinishGoalServiceTest {
         Goal earlyCompleteGoal = finishGoalService.completeGoal(goal);
 
         assertThat(earlyCompleteGoal.getStatus()).isEqualTo(Status.FINISHED);
-        assertThat(earlyCompleteGoal.getPoints()).isEqualTo(24);
-        assertThat(earlyCompleteGoal.getUser().getConclusionPointsGoal()).isEqualTo(24);
+        assertThat(earlyCompleteGoal.getPoints()).isEqualTo(20);
+        assertThat(earlyCompleteGoal.getUser().getConclusionPointsGoal()).isEqualTo(20);
         verify(goalRepository, times(1)).save(goal);
         verify(userCrudService, times(1)).save(goal.getUser());
     }
@@ -159,7 +159,7 @@ class FinishGoalServiceTest {
         verify(userCrudService, Mockito.times(0)).save(any(User.class));
     }
 
-    private Goal buildAGoalOnTimeWorth19Points() {
+    private Goal buildAGoalOnTimeWorth17Points() {
         DatesHistory datesHistory = buildDatesHistoryFor10DaysGoalDeadlineOnTime();
         Goal goal = new Goal();;
         User user = new User();
@@ -170,7 +170,7 @@ class FinishGoalServiceTest {
         goal.addTask(finishedTask);
         goal.setUser(user);
         goal.setDateHistory(datesHistory);
-        goal.setDifficulty(Difficulty.HARD);
+        goal.setDifficulty(Difficulty.MEDIUM);
         goal.setStatus(Status.ONGOING);
         goal.setPoints(0);
 
@@ -192,7 +192,7 @@ class FinishGoalServiceTest {
         return goal;
     }
 
-    private Goal buildAGoal3DaysEarlyWorth24Points() {
+    private Goal buildAGoal3DaysEarlyWorth20Points() {
         DatesHistory datesHistory = buildDatesHistoryFor10DaysGoalDeadlineWith3DaysOfDelayToComplete();
         Goal goal = new Goal();;
         User user = new User();
@@ -200,7 +200,7 @@ class FinishGoalServiceTest {
         user.setConclusionPointsGoal(0);
         goal.setUser(user);
         goal.setDateHistory(datesHistory);
-        goal.setDifficulty(Difficulty.HARD);
+        goal.setDifficulty(Difficulty.EASY);
         goal.setStatus(Status.ONGOING);
         goal.setPoints(0);
 

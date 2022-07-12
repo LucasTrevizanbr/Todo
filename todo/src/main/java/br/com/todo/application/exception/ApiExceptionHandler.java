@@ -1,9 +1,6 @@
 package br.com.todo.application.exception;
 
-import br.com.todo.application.exception.errors.ApiError;
-import br.com.todo.application.exception.errors.NotFoundException;
-import br.com.todo.application.exception.errors.StoppedGoalException;
-import br.com.todo.application.exception.errors.UnfinishedTasksException;
+import br.com.todo.application.exception.errors.*;
 import br.com.todo.application.exception.errors.response.ErrorResponse;
 import br.com.todo.application.exception.errors.response.FieldErrorResponse;
 import org.springframework.http.HttpStatus;
@@ -59,6 +56,17 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(StoppedGoalException.class)
     public ResponseEntity<ErrorResponse> handleStoppedGoalException(StoppedGoalException ex, WebRequest request) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                ex.getMessage(),
+                ex.getInternalCode(),
+                null
+        );
+        return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    @ExceptionHandler(InvalidPasswordException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidPasswordException(InvalidPasswordException ex, WebRequest request) {
         ErrorResponse error = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),
