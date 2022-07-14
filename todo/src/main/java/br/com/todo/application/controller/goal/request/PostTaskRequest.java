@@ -11,8 +11,8 @@ public class PostTaskRequest {
     @Size(min = 10, max = 200)
     private final String description;
 
-    public PostTaskRequest(String descricao){
-        this.description = descricao;
+    public PostTaskRequest(String description){
+        this.description = description;
     }
 
     public String getDescription() {
