@@ -9,52 +9,52 @@ public class UserLoginResponse {
 
     private final Long id;
 
-    private final String nome;
+    private final String name;
 
     private final String email;
 
-    private final String linkFoto;
+    private final String linkPhoto;
 
-    private final String apelido;
+    private final String nickName;
 
     private TokenDto tokenDto;
 
-    private final Integer pontosConclusaoMetas;
+    private final Integer conclusionPointsGoal;
 
-    private final LocalDateTime dataCadastro;
+    private final LocalDateTime registerDate;
 
     public UserLoginResponse(User usuario) {
         this.id = usuario.getId();
-        this.nome = usuario.getName();
+        this.name = usuario.getName();
         this.email = usuario.getEmail();
-        this.linkFoto = usuario.getPhotoLink();
-        this.apelido = usuario.getNickName();
-        this.pontosConclusaoMetas = usuario.getConclusionPointsGoal();
-        this.dataCadastro = usuario.getRegistrationDate();
+        this.linkPhoto = usuario.getPhotoLink();
+        this.nickName = usuario.getNickName();
+        this.conclusionPointsGoal = usuario.getConclusionPointsGoal();
+        this.registerDate = usuario.getRegistrationDate();
     }
 
     public Long getId() {
         return id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public String getLinkFoto() {
-        return linkFoto;
+    public String getLinkPhoto() {
+        return linkPhoto;
     }
 
-    public String getApelido() {
-        return apelido;
+    public String getNickName() {
+        return nickName;
     }
 
-    public Integer getPontosConclusaoMetas() {
-        return pontosConclusaoMetas;
+    public Integer getConclusionPointsGoal() {
+        return conclusionPointsGoal;
     }
 
-    public LocalDateTime getDataCadastro() {
-        return dataCadastro;
+    public LocalDateTime getRegisterDate() {
+        return registerDate;
     }
 
     public String getEmail() {

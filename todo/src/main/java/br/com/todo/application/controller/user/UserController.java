@@ -71,7 +71,7 @@ public class UserController {
 
             return ResponseEntity.ok(userLoginResponse);
         }catch (AuthenticationException ex){
-                return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().build();
         }
 
     }

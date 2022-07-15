@@ -22,11 +22,13 @@ public class DeadLineGoalNotificationService {
     @Value("${application.mail.meta-dia-vencimento.mensagem}")
     private String message;
 
-    @Autowired
-    private GoalRepository goalRepository;
+    private final GoalRepository goalRepository;
+    private final SendMailService emailService;
 
-    @Autowired
-    private SendMailService emailService;
+    public DeadLineGoalNotificationService(GoalRepository goalRepository, SendMailService emailService) {
+        this.goalRepository = goalRepository;
+        this.emailService = emailService;
+    }
 
     @Scheduled(cron = CRON_DEAD_LINE_GOAL)
     public void senMailNotificationForDeadLineGoal(){
