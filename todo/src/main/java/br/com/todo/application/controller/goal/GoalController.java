@@ -104,7 +104,7 @@ public class GoalController {
     }
 
     @DeleteMapping("/{goalId}")
-    public ResponseEntity deleteGoal(@PathVariable Long goalId) {
+    public ResponseEntity<Void> deleteGoal(@PathVariable Long goalId) {
 
         goalService.deleteGoalById(goalId);
 

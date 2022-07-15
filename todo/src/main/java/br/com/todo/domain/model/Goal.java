@@ -57,10 +57,6 @@ public class Goal {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getObjective() {
         return objective;
     }
