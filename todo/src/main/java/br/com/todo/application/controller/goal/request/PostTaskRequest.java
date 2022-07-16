@@ -9,7 +9,10 @@ public class PostTaskRequest {
 
     @NotNull
     @Size(min = 10, max = 200)
-    private final String description;
+    private String description;
+
+    public PostTaskRequest() {
+    }
 
     public PostTaskRequest(String description){
         this.description = description;

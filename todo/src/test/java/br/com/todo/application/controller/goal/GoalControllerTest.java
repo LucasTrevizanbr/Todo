@@ -1,6 +1,7 @@
 package br.com.todo.application.controller.goal;
 
 import br.com.todo.application.controller.goal.request.PostGoalRequest;
+import br.com.todo.application.controller.goal.request.PostTaskRequest;
 import br.com.todo.domain.model.DatesHistory;
 import br.com.todo.domain.model.Goal;
 import br.com.todo.domain.model.Task;
@@ -210,6 +211,34 @@ class GoalControllerTest {
         assertThat(savedGoal).isEmpty();
     }
 
+    @Test
+    @DisplayName("Should create a task in a goal with success")
+    public void createTaskSuccessTest() throws Exception {
+        Goal goal = buildAndSaveGoal();
+        PostTaskRequest taskRequest = new PostTaskRequest("New Task with more than 10 caracteres");
+
+        String taskRequestJson = objectMapper.writeValueAsString(taskRequest);
+
+        mockMvc.perform(post(GOAL_URI + "/" + goal.getId() + "/task")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(taskRequestJson)
+                )
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("id").isNotEmpty())
+                .andExpect(jsonPath("objective").value("Learn TypeScript"))
+                .andExpect(jsonPath("datesHistory").isNotEmpty())
+                .andExpect(jsonPath("points").isNumber())
+                .andExpect(jsonPath("status").value("ONGOING"))
+                .andExpect(jsonPath("difficulty").value("HARD"))
+                .andExpect(jsonPath("ownerName").value("Japa polo olsen"))
+                .andExpect(jsonPath("tasks[0].description")
+                        .value("New Task with more than 10 caracteres"));
+
+        List<Task> taskSaved = taskRepository.findAll();
+        assertThat(taskSaved.get(0).getDescription()).isEqualTo("New Task with more than 10 caracteres");
+    }
+
+
     private Goal buildAndSaveAStoppedGoal() {
         DatesHistory datesHistory = new DatesHistory();
         datesHistory.setRealFinalizationDate(LocalDateTime.now());
@@ -231,7 +260,6 @@ class GoalControllerTest {
         goal.setObjective("Learn TypeScript");
         goal.setStatus(Status.ONGOING);
         goal.setDifficulty(Difficulty.HARD);
-        goal.setTasks(List.of(new Task("Learn OOP")));
         goal.setDateHistory(new DatesHistory(LocalDateTime.now()));
         goal.setUser(buildAndSaveAUser());
 

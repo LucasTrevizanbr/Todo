@@ -111,10 +111,10 @@ public class GoalController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("{goalId}/task")
-    public ResponseEntity<DetailedGoalResponse> createTask(@PathVariable Long id,
+    @PostMapping("/{goalId}/task")
+    public ResponseEntity<DetailedGoalResponse> createTask(@PathVariable Long goalId,
                                                            @RequestBody @Valid PostTaskRequest form){
-        Goal goal = goalService.findById(id);
+        Goal goal = goalService.findById(goalId);
         Goal updatedGoal = goalService.createTask(goal, form.convertToTaskModel());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(new DetailedGoalResponse(updatedGoal));
